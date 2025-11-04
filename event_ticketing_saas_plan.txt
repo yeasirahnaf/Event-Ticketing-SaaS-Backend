@@ -2,7 +2,7 @@ Event Ticketing and Management SaaS Platform — Project Plan
 Project Description
 - A multi-tenant event ticketing platform where organizers create and publish events, sell tickets securely, and manage QR-based attendee check-ins. Designed as a university project and portfolio piece, it emphasizes clear architecture, data isolation per organizer (tenant), reliable checkout and webhooks, and a polished UX for both public event pages and staff check-in workflows.
   - Key Features (at a glance):
-    - Organizer workspaces with roles (owner/admin/staff) and basic branding
+    - Organizer workspaces with roles (Superadmin/admin/staff) and basic branding
     - Event pages with SEO/meta, ticket tiers, inventory caps
     - Secure checkout and order management with receipt emails
     - E-tickets per seat with unique QR codes and email delivery
@@ -25,7 +25,7 @@ TECH STACK UPDATE:
 1) Project Overview
 - Summary: A multi-tenant SaaS for event organizers to create public event pages, sell tickets, process payments, and handle attendee check-in via QR codes. Each organizer (tenant) has isolated data and a branded portal.
 - Target Users:
-  - Organizers (owners/admins): set up events, ticket types, pricing, discounts, view sales.
+  - Organizers (Superadmins/admins): set up events, ticket types, pricing, discounts, view sales.
   - Staff: door/check-in, attendee support.
   - Attendees: discover event pages, purchase tickets, receive e-tickets, manage orders.
 - Value Proposition:
@@ -42,9 +42,9 @@ TECH STACK UPDATE:
 - Dashboard & Reporting: revenue, units sold, orders/attendees list; CSV export.
 
 3) User Roles & Access Control
-- Roles per tenant: owner, admin, staff.
+- Roles per tenant: Superadmin, admin, staff.
 - Access scope:
-  - Owner/Admin: full tenant configuration, events, ticketing, reports.
+  - Superadmin/Admin: full tenant configuration, events, ticketing, reports.
   - Staff: check-in access and limited views.
 - Public: read-only event page and checkout.
 
