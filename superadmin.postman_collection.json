@@ -1,0 +1,354 @@
+{
+	"info": {
+		"_postman_id": "superadmin-api-collection",
+		"name": "SuperAdmin API Collection",
+		"description": "Collection for testing SuperAdmin endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admins",
+			"item": [
+				{
+					"name": "Create Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@aiub.edu\",\n  \"password\": \"password123\",\n  \"tenantId\": \"123e4567-e89b-12d3-a456-426614174000\",\n  \"phone\": \"01712345678\",\n  \"role\": \"admin\",\n  \"gender\": \"male\",\n  \"nidNumber\": \"1234567890123\",\n  \"nidImageUrl\": \"https://example.com/nid.jpg\",\n  \"status\": \"active\",\n  \"permissions\": [\"read\", \"write\"],\n  \"addressLine1\": \"123 Main St\",\n  \"addressLine2\": \"Apt 4B\",\n  \"city\": \"Dhaka\",\n  \"country\": \"Bangladesh\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/admins",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"admins"
+							]
+						},
+						"description": "Create a new admin user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Admins",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/admins?page=1&limit=10&search=&status=active&role=admin&tenantId=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"admins"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (min: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page (min: 1, max: 100)"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Search term"
+								},
+								{
+									"key": "status",
+									"value": "active",
+									"description": "Filter by status: active, inactive, suspended"
+								},
+								{
+									"key": "role",
+									"value": "admin",
+									"description": "Filter by role: owner, admin, staff, superadmin"
+								},
+								{
+									"key": "tenantId",
+									"value": "",
+									"description": "Filter by tenant ID (UUID)"
+								}
+							]
+						},
+						"description": "Get all admins with optional filtering and pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Admin By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/admins/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"admins",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Admin ID"
+								}
+							]
+						},
+						"description": "Get a specific admin by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Admin",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@aiub.edu\",\n  \"password\": \"newpassword123\",\n  \"name\": \"John Updated\",\n  \"phone\": \"01712345678\",\n  \"role\": \"admin\",\n  \"gender\": \"male\",\n  \"nidNumber\": \"1234567890123\",\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/admins/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"admins",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Admin ID"
+								}
+							]
+						},
+						"description": "Update an admin. Email and password are required fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Admin Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/admins/:id/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"admins",
+								":id",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Admin ID"
+								}
+							]
+						},
+						"description": "Update admin status. Status must be one of: active, inactive, suspended"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Admin",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/admins/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"admins",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Admin ID"
+								}
+							]
+						},
+						"description": "Delete an admin by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload NID Image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nid",
+									"type": "file",
+									"src": [],
+									"description": "NID image file (jpg, jpeg, png, webp). Max size: 2MB"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/admins/:id/nid-image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"admins",
+								":id",
+								"nid-image"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Admin ID"
+								}
+							]
+						},
+						"description": "Upload NID image for an admin. Accepts: jpg, jpeg, png, webp. Max file size: 2MB"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin management endpoints"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane.smith@aiub.edu\",\n  \"password\": \"password123\",\n  \"tenantId\": \"123e4567-e89b-12d3-a456-426614174000\",\n  \"phone\": \"01712345678\",\n  \"role\": \"staff\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"users"
+							]
+						},
+						"description": "Create a new user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/users?page=1&limit=10&search=&status=active&role=staff&tenantId=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (min: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page (min: 1, max: 100)"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Search term"
+								},
+								{
+									"key": "status",
+									"value": "active",
+									"description": "Filter by status: active, inactive, suspended"
+								},
+								{
+									"key": "role",
+									"value": "staff",
+									"description": "Filter by role: owner, admin, staff"
+								},
+								{
+									"key": "tenantId",
+									"value": "",
+									"description": "Filter by tenant ID (UUID)"
+								}
+							]
+						},
+						"description": "Get all users with optional filtering and pagination"
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
+
