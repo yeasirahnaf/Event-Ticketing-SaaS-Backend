@@ -10,6 +10,9 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  UsePipes,
+  ValidationPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError } from 'multer';
@@ -19,31 +22,33 @@ import {
   UpdateAdminStatusDto,
   CreateUserDto,
   AdminQueryDto,
+  CreateTask3UserDto,
+  UpdateUserStatusDto,
 } from './superadmin.dto';
 import { SuperAdminService } from './superadmin.service';
 
 @Controller('superadmin')
 export class SuperAdminController {
-  constructor(private readonly superadminservice: SuperAdminService) {}
+  constructor(private readonly superAdminService: SuperAdminService) {}
 
   @Post('admins')
   createAdmin(@Body() createAdminDto: CreateAdminDto) {
-    return this.superadminservice.createAdmin(createAdminDto);
+    return this.superAdminService.createAdmin(createAdminDto);
   }
 
   @Get('admins')
   getAllAdmins(@Query() query: AdminQueryDto) {
-    return this.superadminservice.getAllAdmins(query);
+    return this.superAdminService.getAllAdmins(query);
   }
 
   @Get('admins/:id')
   getAdminById(@Param('id') id: string) {
-    return this.superadminservice.getAdminById(id);
+    return this.superAdminService.getAdminById(id);
   }
 
   @Put('admins/:id')
   updateAdmin(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.superadminservice.updateAdmin(id, updateAdminDto);
+    return this.superAdminService.updateAdmin(id, updateAdminDto);
   }
 
   @Patch('admins/:id/status')
@@ -51,12 +56,12 @@ export class SuperAdminController {
     @Param('id') id: string,
     @Body() updateStatusDto: UpdateAdminStatusDto,
   ) {
-    return this.superadminservice.updateAdminStatus(id, updateStatusDto);
+    return this.superAdminService.updateAdminStatus(id, updateStatusDto);
   }
 
   @Delete('admins/:id')
   deleteAdmin(@Param('id') id: string) {
-    return this.superadminservice.deleteAdmin(id);
+    return this.superAdminService.deleteAdmin(id);
   }
 
   @Post('admins/:id/nid-image')
@@ -76,16 +81,42 @@ export class SuperAdminController {
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.superadminservice.saveAdminNidImage(id, file);
+    return this.superAdminService.saveAdminNidImage(id, file);
   }
 
   @Post('users')
   createUser(@Body() createUserDto: CreateUserDto) {
-    return this.superadminservice.createUser(createUserDto);
+    return this.superAdminService.createUser(createUserDto);
   }
 
   @Get('users')
   getAllUsers(@Query() query: AdminQueryDto) {
-    return this.superadminservice.getAllUsers(query);
+    return this.superAdminService.getAllUsers(query);
+  }
+
+  // Task3 User endpoints
+  @Post('task3/users')
+  @UsePipes(new ValidationPipe())
+  createTask3User(@Body() createUserDto: CreateTask3UserDto) {
+    return this.superAdminService.createTask3User(createUserDto);
+  }
+
+  @Patch('task3/users/:id/status')
+  @UsePipes(new ValidationPipe())
+  updateUserStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateStatusDto: UpdateUserStatusDto,
+  ) {
+    return this.superAdminService.updateUserStatus(id, updateStatusDto);
+  }
+
+  @Get('task3/users/inactive')
+  getInactiveUsers() {
+    return this.superAdminService.getInactiveUsers();
+  }
+
+  @Get('task3/users/older-than-40')
+  getUsersOlderThan40() {
+    return this.superAdminService.getUsersOlderThan40();
   }
 }

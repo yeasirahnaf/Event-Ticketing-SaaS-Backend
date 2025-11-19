@@ -1,0 +1,10 @@
+Schema Criteria: - - - - 
+Id: A primary key of type int that is unsigned. 
+fullName: A varchar column of maximum length 100 characters  
+age: unsigned integer. 
+status: default value 'active' and values are only 'active' or 'inactive',. 
+Operation: - - - - 
+Create a user 
+Change the status of a user to either 'active' or 'inactive'. 
+Retrieve a list of users based on their 'inactive' status. 
+Get a list of users older 40. 

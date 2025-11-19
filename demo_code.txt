@@ -271,3 +271,153 @@ name.
 you to manipulate and send the HTTP response.
 res.sendFile(name, { root: './uploads' }) statement is used to send 
 the image file as the response.
+
+
+import { Entity, Column, PrimaryGeneratedColumn} from 'typeorm’;
+ @Entity("admin")
+ export class AdminEntity{
+ @PrimaryGeneratedColumn()
+ id: number;
+ @Column()
+ name: string;
+ @Column()
+ email: string;
+ @Column()
+ password: string;
+ }
+
+
+import { Entity, Column, PrimaryGeneratedColumn} from 'typeorm’;
+ @Entity("admin")
+ export class AdminEntity{
+ @PrimaryGeneratedColumn()
+ id: number;
+ @Column()
+ name: string;
+ @Column()
+ email: string;
+ @Column()
+ password: string;
+ }
+
+
+Then update the admin.module.ts file to add the Entity class. 
+import { Module } from "@nestjs/common";
+ import { AdminController } from "./admin.controller";
+ import { AdminService } from "./admin.service";
+ import { AdminEntity } from "./admin.entity";
+ import { TypeOrmModule } from "@nestjs/typeorm";
+ @Module({
+ imports: [ TypeOrmModule.forFeature([AdminEntity]),],
+ controllers: [AdminController],
+ providers: [AdminService],
+ })
+ export class AdminModule {}
+
+
+import { Injectable } from '@nestjs/common';
+ import { InjectRepository } from '@nestjs/typeorm';
+ import { Repository } from 'typeorm';
+ import { User } from './user.entity'; // change this to your entity class
+ @Injectable()
+ export class UserService {
+ constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
+ // userRepository is the local repository
+ async createUser(user: User): Promise<User> {
+ return this.userRepository.save(user);
+ }
+ async getAllUsers(): Promise<User[]> {
+ return this.userRepository.find();
+ }
+ async getUserById(id: number): Promise<User> {
+ return this.userRepository.findOneBy({id:id});
+ }
+ async updateUser(id: number, updatedUser: User): Promise<User> {
+ await this.userRepository.update(id, updatedUser);
+ return this.userRepository.findOneBy({id:id});  
+}
+ async deleteUser(id: number): Promise<void> {
+ await this.userRepository.delete(id);
+ }
+ }
+
+
+// Create a new user
+ async createUser(user: User): Promise<User> {
+ return this.userRepository.save(user);
+ }
+ // Get all users
+ async getAllUsers(): Promise<User[]> {
+ return this.userRepository.find();
+ }
+ // Get a user by ID
+ async getUserById(id: number): Promise<User> {
+ return this.userRepository.findOneBy({id:id});
+ }
+
+// Update a user
+ async updateUser(id: number, updatedUser: User): Promise<User> {
+ // Update the user with the provided ID using the updatedUser 
+data
+ await this.userRepository.update(id, updatedUser);
+ // Return the updated user
+ return this.userRepository.findOneBy({id:id});
+ }
+ // Delete a user
+ async deleteUser(id: number): Promise<void> {
+ // Delete the user with the provided ID
+ await this.userRepository.delete(id);
+ }
+
+
+Repository and manager .find* methods accept special options 
+userRepository.find({
+ select: { //select - indicates which properties of the main 
+object must be selected
+ firstName: true,
+ lastName: true,
+ },
+ })
+ This will execute following query:
+ SELECT "firstName", "lastName" FROM "user"
+
+OR Operator
+ userRepository.find({
+ where: [
+ { firstName: "Timber"},
+ { firstName: "Stan" },
+ ],
+ })
+ This will execute following query:
+ SELECT * FROM "user" WHERE ("firstName" = 'Timber') OR 
+("firstName" = 'Stan')
+
+AND Operator
+ userRepository.find({
+ where: 
+{ firstName: "Timber",
+ firstName: "Stan" },
+ ,
+ })
+ This will execute following query:
+ SELECT * FROM "user" WHERE ("firstName" = 'Timber’) AND 
+("firstName" = 'Stan')
+
+Order
+ userRepository.find({ //order - selection order.
+ order: {
+ name: "ASC",
+ id: "DESC",
+ },
+ })
+ This will execute following query:
+ SELECT * FROM "user"
+ ORDER BY "name" ASC, "id" DESC
+
+ LIKE Operator
+ userRepository.find({
+ where: {
+ name: Like('John%’), //Like operator is used to 
+perform a partial match search
+ },
+ });

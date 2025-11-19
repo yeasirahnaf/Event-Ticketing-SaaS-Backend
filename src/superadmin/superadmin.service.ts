@@ -1,14 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, MoreThan } from 'typeorm';
 import {
   CreateAdminDto,
   UpdateAdminDto,
   UpdateAdminStatusDto,
   CreateUserDto,
   AdminQueryDto,
+  CreateTask3UserDto,
+  UpdateUserStatusDto,
 } from './superadmin.dto';
+import { UserEntity } from './user.entity';
 
 @Injectable()
 export class SuperAdminService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+  ) {}
   createAdmin(createAdminDto: CreateAdminDto) {
     return {
       message: 'Admin created successfully',
@@ -225,5 +234,37 @@ export class SuperAdminService {
         },
       },
     };
+  }
+
+  // Task3 User operations
+  async createTask3User(
+    createUserDto: CreateTask3UserDto,
+  ): Promise<UserEntity> {
+    const user = this.userRepository.create(createUserDto);
+    return this.userRepository.save(user);
+  }
+
+  async updateUserStatus(
+    id: number,
+    updateStatusDto: UpdateUserStatusDto,
+  ): Promise<UserEntity> {
+    await this.userRepository.update(id, { status: updateStatusDto.status });
+    const user = await this.userRepository.findOneBy({ id: id });
+    if (!user) {
+      throw new Error(`User with id ${id} not found`);
+    }
+    return user;
+  }
+
+  async getInactiveUsers(): Promise<UserEntity[]> {
+    return this.userRepository.find({
+      where: { status: 'inactive' },
+    });
+  }
+
+  async getUsersOlderThan40(): Promise<UserEntity[]> {
+    return this.userRepository.find({
+      where: { age: MoreThan(40) },
+    });
   }
 }

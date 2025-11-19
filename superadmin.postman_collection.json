@@ -341,6 +341,121 @@
 				}
 			],
 			"description": "User management endpoints"
+		},
+		{
+			"name": "Task3 Users",
+			"item": [
+				{
+					"name": "Create Task3 User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"John Doe\",\n  \"age\": 35\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/task3/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"task3",
+								"users"
+							]
+						},
+						"description": "Create a new user with fullName (max 100 chars) and age (unsigned integer). Status defaults to 'active'."
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"inactive\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/task3/users/:id/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"task3",
+								"users",
+								":id",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "User ID (unsigned integer)"
+								}
+							]
+						},
+						"description": "Change the status of a user to either 'active' or 'inactive'"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Inactive Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/task3/users/inactive",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"task3",
+								"users",
+								"inactive"
+							]
+						},
+						"description": "Retrieve a list of users based on their 'inactive' status"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users Older Than 40",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/superadmin/task3/users/older-than-40",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"superadmin",
+								"task3",
+								"users",
+								"older-than-40"
+							]
+						},
+						"description": "Get a list of users older than 40"
+					},
+					"response": []
+				}
+			],
+			"description": "Task3 User management endpoints - Schema: id (unsigned int), fullName (varchar 100), age (unsigned int), status (active/inactive, default: active)"
 		}
 	],
 	"variable": [

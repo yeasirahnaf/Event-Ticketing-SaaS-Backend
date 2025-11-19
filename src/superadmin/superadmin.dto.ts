@@ -12,6 +12,7 @@ import {
   Max,
   Matches,
   MinLength,
+  MaxLength,
   IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -227,4 +228,24 @@ export class AdminQueryDto {
   @IsOptional()
   @IsUUID()
   tenantId?: string;
+}
+
+// Task3 DTOs for User operations
+export class CreateTask3UserDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  fullName: string;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  age: number;
+}
+
+export class UpdateUserStatusDto {
+  @IsIn(['active', 'inactive'], {
+    message: 'status must be either active or inactive',
+  })
+  status: string;
 }
