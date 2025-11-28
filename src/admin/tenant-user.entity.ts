@@ -22,7 +22,7 @@ export class TenantUserEntity {
 
   @Column({
     type: 'enum',
-    enum: ['admin', 'staff'],
+    enum: ['TenantAdmin', 'staff'],
   })
   role: string;
 

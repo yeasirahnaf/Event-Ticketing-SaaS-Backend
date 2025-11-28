@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SuperAdminModule } from './admin/superadmin.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
-    SuperAdminModule,
+    AdminModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',

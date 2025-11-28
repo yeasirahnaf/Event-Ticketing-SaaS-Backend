@@ -23,7 +23,7 @@ import {
   WebhookEventQueryDto,
   PaymentQueryDto,
   ActivityLogQueryDto,
-} from './superadmin.dto';
+} from './admin.dto';
 import { UserEntity } from './user.entity';
 import { TenantEntity } from './tenant.entity';
 import { TenantUserEntity } from './tenant-user.entity';
@@ -32,7 +32,7 @@ import { PaymentEntity } from './payment.entity';
 import { ActivityLogEntity } from './activity-log.entity';
 
 @Injectable()
-export class SuperAdminService {
+export class AdminService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
@@ -54,7 +54,7 @@ export class SuperAdminService {
       email: createUserDto.email,
       passwordHash: createUserDto.passwordHash,
       fullName: createUserDto.fullName,
-      isPlatformSuperadmin: createUserDto.isPlatformSuperadmin ?? false,
+      isPlatformAdmin: createUserDto.isPlatformAdmin ?? false,
     });
     return this.userRepository.save(user);
   }
@@ -111,8 +111,8 @@ export class SuperAdminService {
     if (updateUserDto.fullName !== undefined) {
       updateData.fullName = updateUserDto.fullName;
     }
-    if (updateUserDto.isPlatformSuperadmin !== undefined) {
-      updateData.isPlatformSuperadmin = updateUserDto.isPlatformSuperadmin;
+    if (updateUserDto.isPlatformAdmin !== undefined) {
+      updateData.isPlatformAdmin = updateUserDto.isPlatformAdmin;
     }
     await this.userRepository.update(id, updateData);
     const user = await this.userRepository.findOneBy({ id });
@@ -611,3 +611,4 @@ export class SuperAdminService {
     }
   }
 }
+

@@ -4,8 +4,8 @@ This document explains the four user types, the database structure, and the main
 
 ## Core Personas
 
-- **Superadmin** looks after the entire platform: tenants, compliance, and health monitoring.
-- **Admin** (organizer owner) configures branding, events, tickets, discounts, and reports for a single tenant.
+- **admin** looks after the entire platform: tenants, compliance, and health monitoring.
+- **TenantAdmin** (organizer owner) configures branding, events, tickets, discounts, and reports for a single tenant.
 - **Staff** focuses on on-site operations such as check-in and attendee support.
 - **User** (attendee) browses public events, purchases tickets, and stores QR passes.
 
@@ -14,8 +14,8 @@ This document explains the four user types, the database structure, and the main
 Think of the database as different notebooks, each keeping track of a part of the platform:
 
 - **Tenants** (`tenants`): every organizer/brand gets one row here with its name, slug, and branding colors.
-- **Users** (`users`): everyone who can log into the system (superadmin, admin, staff) lives here with email + password hash.
-- **Tenant Users** (`tenant_users`): a simple link that says “this user belongs to this tenant with the role admin/staff.”
+- **Users** (`users`): everyone who can log into the system (admin, TenantAdmin, staff) lives here with email + password hash.
+- **Tenant Users** (`tenant_users`): a simple link that says "this user belongs to this tenant with the role TenantAdmin/staff."
 - **Events** (`events`): every event an organizer creates, including venue, schedule, status, and public slug.
 - **Event Sessions** (`event_sessions`): optional mini-blocks if an event has multiple days or time slots.
 - **Ticket Types** (`ticket_types`): each pricing tier (VIP, GA, Early Bird) with its price, currency, and total quantity.
@@ -25,13 +25,13 @@ Think of the database as different notebooks, each keeping track of a part of th
 - **Payments** (`payments`): record the Stripe payment intent or charge reference so finance can reconcile.
 - **Discount Codes** (`discount_codes`): optional promos; keep the code, expiry, and how many times it was used.
 - **Webhook Events** (`webhook_events`): keep raw Stripe/email callbacks for debugging and retries.
-- **Activity Logs** (`activity_logs`): store “who did what” (e.g., staff checked in a guest, admin edited an event).
+- **Activity Logs** (`activity_logs`): store "who did what" (e.g., staff checked in a guest, TenantAdmin edited an event).
 
 | Domain | Table | Purpose | Important Columns |
 | --- | --- | --- | --- |
 | Identity | `tenants` | Organizer accounts | `id`, `name`, `slug`, `branding_settings`, timestamps |
 | Identity | `tenant_users` | Maps platform users to tenants with roles | `id`, `tenant_id`, `user_id`, `role`, `status` |
-| Identity | `users` | Global user records | `id`, `email`, `password_hash`, `full_name`, `is_platform_superadmin` |
+| Identity | `users` | Global user records | `id`, `email`, `password_hash`, `full_name`, `is_platform_admin` |
 | Events | `events` | Event definitions | `id`, `tenant_id`, `slug`, `status`, `venue`, `start_at`, `end_at` |
 | Events | `event_sessions` | Session blocks for multi-day events | `id`, `event_id`, `start_at`, `end_at`, `title` |
 | Ticketing | `ticket_types` | Pricing tiers | `id`, `event_id`, `name`, `price_cents`, `currency`, `quantity_total`, `quantity_sold` |
@@ -41,20 +41,20 @@ Think of the database as different notebooks, each keeping track of a part of th
 | Payments | `payments` | Provider transactions | `id`, `order_id`, `provider`, `provider_reference`, `status`, `payload` |
 | Discounts | `discount_codes` | Optional promotions | `id`, `event_id`, `code`, `max_redemptions`, `times_redeemed`, `expires_at` |
 | Operations | `webhook_events` | Raw webhook storage | `id`, `provider`, `event_type`, `payload`, `received_at`, `processed_at`, `status` |
-| Audit | `activity_logs` | Staff/Admin actions | `id`, `tenant_id`, `actor_id`, `action`, `metadata` |
+| Audit | `activity_logs` | Staff/TenantAdmin actions | `id`, `tenant_id`, `actor_id`, `action`, `metadata` |
 
 ## Tables Used by Each User Type
 
-### Superadmin Tables
+### admin Tables
 
-- `users` (to manage platform-level accounts and superadmins).
+- `users` (to manage platform-level accounts and admins).
 - `tenants` (review tenant onboarding, suspend/reactivate tenants).
 - `tenant_users` (see who belongs to each tenant and their role).
 - `webhook_events` (inspect Stripe or mailer callbacks).
 - `payments` (audit payouts and failed charges globally).
-- `activity_logs` (audit actions performed by admins/staff).
+- `activity_logs` (audit actions performed by TenantAdmins/staff).
 
-### Admin Tables (Data)
+### TenantAdmin Tables (Data)
 
 - `tenants` (update tenant branding settings).
 - `events` and `event_sessions` (create, edit, publish, archive events).
@@ -82,25 +82,25 @@ Think of the database as different notebooks, each keeping track of a part of th
 
 ## Table Details and Relationships
 
-### Superadmin-Facing Tables
+### admin-Facing Tables
 
 | Table | Columns |
 | --- | --- |
-| `users` | `id`, `email`, `password_hash`, `full_name`, `is_platform_superadmin`, `created_at`, `updated_at` |
+| `users` | `id`, `email`, `password_hash`, `full_name`, `is_platform_admin`, `created_at`, `updated_at` |
 | `tenants` | `id`, `name`, `slug`, `branding_settings`, `status`, `created_at`, `updated_at` |
 | `tenant_users` | `id`, `tenant_id`, `user_id`, `role`, `status`, `invited_at`, `last_login_at` |
 | `webhook_events` | `id`, `provider`, `event_type`, `payload`, `received_at`, `processed_at`, `status`, `error_message` |
 | `payments` | `id`, `order_id`, `provider`, `provider_reference`, `status`, `amount_cents`, `currency`, `processed_at`, `payload` |
 | `activity_logs` | `id`, `tenant_id`, `actor_id`, `action`, `metadata`, `created_at` |
 
-#### Superadmin Relations
+#### admin Relations
 
 - `tenant_users.user_id` → `users.id` (many tenant memberships per user).
 - `tenant_users.tenant_id` → `tenants.id`.
 - `payments.order_id` → `orders.id` (Orders table defined below).
 - `activity_logs.actor_id` → `users.id`, `activity_logs.tenant_id` → `tenants.id`.
 
-### Admin Tables (Details)
+### TenantAdmin Tables (Details)
 
 | Table | Columns |
 | --- | --- |
@@ -116,7 +116,7 @@ Think of the database as different notebooks, each keeping track of a part of th
 | `activity_logs` | same as above |
 | `payments` | same as above |
 
-#### Admin Relations
+#### TenantAdmin Relations
 
 - `events.tenant_id` → `tenants.id`.
 - `event_sessions.event_id` → `events.id`.
@@ -165,7 +165,7 @@ Think of the database as different notebooks, each keeping track of a part of th
 1. **Foundation**
    - Connect NestJS to PostgreSQL via TypeORM with migrations.
    - Build auth (JWT + bcrypt) plus tenant context guards.
-   - Seed an initial superadmin and sample tenant.
+   - Seed an initial admin and sample tenant.
 2. **Events and Tickets**
    - CRUD flows for events, sessions, ticket tiers.
    - Validation pipes to enforce unique slugs per tenant and safe inventory updates.
@@ -184,8 +184,8 @@ Think of the database as different notebooks, each keeping track of a part of th
 
 ## Role Highlights
 
-- **Superadmin**: approve tenants, configure global settings, watch webhooks, enforce security.
-- **Admin**: manage branding, events, tickets, discounts, team invites, analytics, and refunds.
+- **admin**: approve tenants, configure global settings, watch webhooks, enforce security.
+- **TenantAdmin**: manage branding, events, tickets, discounts, team invites, analytics, and refunds.
 - **Staff**: run the check-in app, update attendance, assist attendees, submit incident notes.
 - **User**: discover events, purchase tickets, download QR passes, manage notifications.
 

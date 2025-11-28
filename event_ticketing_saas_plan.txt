@@ -19,12 +19,12 @@
 - Serve organizers, staff, and attendees end-to-end: event creation → checkout → QR scan → reporting.
 - Multi-tenant isolation is mandatory (every table keyed by `tenant_id`).
 - Target users:
-  - **Organizers/Admins:** manage tenants, events, pricing, discounts, reporting.
+  - **Organizers/TenantAdmins:** manage tenants, events, pricing, discounts, reporting.
   - **Staff:** run check-in, support attendees.
   - **Attendees:** browse, purchase, view tickets.
 
 ### 2. Functional Requirements
-- Organizer & Team Management: create tenant, invite admins/staff, basic branding (logo/colors).
+- Organizer & Team Management: create tenant, invite TenantAdmins/staff, basic branding (logo/colors).
 - Events: draft/publish/archive; details (name, slug, description, venue, dates, timezone, is_public); SEO/meta.
 - Ticket Types & Inventory: multiple tiers; price/currency; quantity_total; prevent oversell.
 - Checkout & Orders: pending → paid; idempotent updates; order details (buyer email, total, items).
@@ -33,11 +33,11 @@
 - Dashboard & Reporting: revenue, units sold, orders/attendees list; CSV export.
 
 ### 3. User Roles & Access Control
-- Roles per tenant: Superadmin, admin, staff, user  
+- Roles per tenant: admin, TenantAdmin, staff, user  
 - Access scope:
-  - Superadmin/Admin: full tenant configuration, events, ticketing, reports.
+  - admin/TenantAdmin: full tenant configuration, events, ticketing, reports.
   - Staff: check-in access and limited views.
-- Public: read-only event page and checkout.
+  - Public: read-only event page and checkout.
 
 ### 4. Multi-Tenancy & Data Isolation
 - Tenancy Model: row-level tenancy using tenant_id across all domain tables; composite uniqueness (tenant_id, slug).

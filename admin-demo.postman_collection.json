@@ -36,7 +36,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"superadmin@example.com\",\n  \"passwordHash\": \"$2b$10$hashedpassword123456789012345678\",\n  \"fullName\": \"Super Admin User\",\n  \"isPlatformSuperadmin\": true\n}"
+							"raw": "{\n  \"email\": \"admin@example.com\",\n  \"passwordHash\": \"$2b$10$hashedpassword123456789012345678\",\n  \"fullName\": \"Admin User\",\n  \"isPlatformAdmin\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/admin/users",
@@ -77,7 +77,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin1@tenant1.com\",\n  \"passwordHash\": \"$2b$10$hashedpassword123456789012345678\",\n  \"fullName\": \"Admin User One\",\n  \"isPlatformSuperadmin\": false\n}"
+							"raw": "{\n  \"email\": \"admin1@tenant1.com\",\n  \"passwordHash\": \"$2b$10$hashedpassword123456789012345678\",\n  \"fullName\": \"Admin User One\",\n  \"isPlatformAdmin\": false\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/admin/users",
@@ -118,7 +118,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"staff1@tenant1.com\",\n  \"passwordHash\": \"$2b$10$hashedpassword123456789012345678\",\n  \"fullName\": \"Staff User One\",\n  \"isPlatformSuperadmin\": false\n}"
+							"raw": "{\n  \"email\": \"staff1@tenant1.com\",\n  \"passwordHash\": \"$2b$10$hashedpassword123456789012345678\",\n  \"fullName\": \"Staff User One\",\n  \"isPlatformAdmin\": false\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/admin/users",

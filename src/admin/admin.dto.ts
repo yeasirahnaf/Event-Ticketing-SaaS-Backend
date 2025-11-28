@@ -37,7 +37,7 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsBoolean()
-  isPlatformSuperadmin?: boolean;
+  isPlatformAdmin?: boolean;
 }
 
 export class UpdateUserDto {
@@ -57,7 +57,7 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsBoolean()
-  isPlatformSuperadmin?: boolean;
+  isPlatformAdmin?: boolean;
 }
 
 // Tenant DTOs
@@ -122,8 +122,8 @@ export class CreateTenantUserDto {
   @IsNotEmpty()
   userId: string;
 
-  @IsIn(['admin', 'staff'], {
-    message: 'role must be either admin or staff',
+  @IsIn(['TenantAdmin', 'staff'], {
+    message: 'role must be either TenantAdmin or staff',
   })
   role: string;
 
@@ -134,7 +134,7 @@ export class CreateTenantUserDto {
 
 export class UpdateTenantUserDto {
   @IsOptional()
-  @IsIn(['admin', 'staff'])
+  @IsIn(['TenantAdmin', 'staff'])
   role?: string;
 
   @IsOptional()
@@ -338,7 +338,7 @@ export class TenantUserQueryDto {
   userId?: string;
 
   @IsOptional()
-  @IsIn(['admin', 'staff'])
+  @IsIn(['TenantAdmin', 'staff'])
   role?: string;
 
   @IsOptional()
@@ -426,3 +426,4 @@ export class ActivityLogQueryDto {
   @IsString()
   action?: string;
 }
+

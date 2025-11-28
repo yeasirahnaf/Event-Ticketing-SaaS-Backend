@@ -20,8 +20,8 @@ export class UserEntity {
   @Column({ name: 'full_name' })
   fullName: string;
 
-  @Column({ name: 'is_platform_superadmin', default: false })
-  isPlatformSuperadmin: boolean;
+  @Column({ name: 'is_platform_admin', default: false })
+  isPlatformAdmin: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

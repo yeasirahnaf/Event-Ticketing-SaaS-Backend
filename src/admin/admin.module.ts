@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SuperAdminController } from './superadmin.controller';
-import { SuperAdminService } from './superadmin.service';
+import { AdminController } from './admin.controller';
+import { AdminService } from './admin.service';
 import { UserEntity } from './user.entity';
 import { TenantEntity } from './tenant.entity';
 import { TenantUserEntity } from './tenant-user.entity';
@@ -20,7 +20,8 @@ import { ActivityLogEntity } from './activity-log.entity';
       ActivityLogEntity,
     ]),
   ],
-  controllers: [SuperAdminController],
-  providers: [SuperAdminService],
+  controllers: [AdminController],
+  providers: [AdminService],
 })
-export class SuperAdminModule {}
+export class AdminModule {}
+
