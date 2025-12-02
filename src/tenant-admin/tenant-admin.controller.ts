@@ -1,6 +1,22 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { TenantAdminService } from './tenant-admin.service';
-import { createEventsDto, EventSessionsDto, CreateTicketsDto, DiscountCodesDto, OrdersDto, TicketsDto } from './tenant-admin.dto';
+import {
+  createEventsDto,
+  EventSessionsDto,
+  CreateTicketsDto,
+  DiscountCodesDto,
+  OrdersDto,
+  TicketsDto,
+} from './tenant-admin.dto';
 
 @Controller('tenant-admin')
 export class TenantAdminController {
@@ -22,7 +38,10 @@ export class TenantAdminController {
   }
 
   @Put('events/:eventId')
-  async updateEvent(@Param('eventId') eventId: string, @Body() updateEventsDto: Partial<createEventsDto>) {
+  async updateEvent(
+    @Param('eventId') eventId: string,
+    @Body() updateEventsDto: Partial<createEventsDto>,
+  ) {
     return await this.tenantAdminService.updateEvent(eventId, updateEventsDto);
   }
 
@@ -47,8 +66,14 @@ export class TenantAdminController {
   }
 
   @Put('event-sessions/:sessionId')
-  async updateEventSession(@Param('sessionId') sessionId: string, @Body() updateSessionDto: Partial<EventSessionsDto>) {
-    return await this.tenantAdminService.updateEventSession(sessionId, updateSessionDto);
+  async updateEventSession(
+    @Param('sessionId') sessionId: string,
+    @Body() updateSessionDto: Partial<EventSessionsDto>,
+  ) {
+    return await this.tenantAdminService.updateEventSession(
+      sessionId,
+      updateSessionDto,
+    );
   }
 
   @Delete('event-sessions/:sessionId')
@@ -72,8 +97,14 @@ export class TenantAdminController {
   }
 
   @Put('ticket-types/:ticketTypeId')
-  async updateTicketType(@Param('ticketTypeId') ticketTypeId: string, @Body() updateTicketDto: Partial<CreateTicketsDto>) {
-    return await this.tenantAdminService.updateTicketType(ticketTypeId, updateTicketDto);
+  async updateTicketType(
+    @Param('ticketTypeId') ticketTypeId: string,
+    @Body() updateTicketDto: Partial<CreateTicketsDto>,
+  ) {
+    return await this.tenantAdminService.updateTicketType(
+      ticketTypeId,
+      updateTicketDto,
+    );
   }
 
   @Delete('ticket-types/:ticketTypeId')
@@ -102,8 +133,14 @@ export class TenantAdminController {
   }
 
   @Put('discount-codes/:discountCodeId')
-  async updateDiscountCode(@Param('discountCodeId') discountCodeId: string, @Body() updateDiscountDto: Partial<DiscountCodesDto>) {
-    return await this.tenantAdminService.updateDiscountCode(discountCodeId, updateDiscountDto);
+  async updateDiscountCode(
+    @Param('discountCodeId') discountCodeId: string,
+    @Body() updateDiscountDto: Partial<DiscountCodesDto>,
+  ) {
+    return await this.tenantAdminService.updateDiscountCode(
+      discountCodeId,
+      updateDiscountDto,
+    );
   }
 
   @Delete('discount-codes/:discountCodeId')
@@ -117,7 +154,10 @@ export class TenantAdminController {
   }
 
   @Get('orders')
-  async getOrders(@Query('tenantId') tenantId: string, @Query('eventId') eventId?: string) {
+  async getOrders(
+    @Query('tenantId') tenantId: string,
+    @Query('eventId') eventId?: string,
+  ) {
     return await this.tenantAdminService.getOrders(tenantId, eventId);
   }
 
@@ -127,7 +167,10 @@ export class TenantAdminController {
   }
 
   @Put('orders/:orderId')
-  async updateOrder(@Param('orderId') orderId: string, @Body() updateOrderDto: Partial<OrdersDto>) {
+  async updateOrder(
+    @Param('orderId') orderId: string,
+    @Body() updateOrderDto: Partial<OrdersDto>,
+  ) {
     return await this.tenantAdminService.updateOrder(orderId, updateOrderDto);
   }
 
@@ -157,8 +200,14 @@ export class TenantAdminController {
   }
 
   @Put('tickets/:ticketId')
-  async updateTicket(@Param('ticketId') ticketId: string, @Body() updateTicketDto: Partial<TicketsDto>) {
-    return await this.tenantAdminService.updateTicket(ticketId, updateTicketDto);
+  async updateTicket(
+    @Param('ticketId') ticketId: string,
+    @Body() updateTicketDto: Partial<TicketsDto>,
+  ) {
+    return await this.tenantAdminService.updateTicket(
+      ticketId,
+      updateTicketDto,
+    );
   }
 
   @Delete('tickets/:ticketId')

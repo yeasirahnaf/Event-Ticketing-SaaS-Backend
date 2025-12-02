@@ -1,0 +1,801 @@
+{
+	"info": {
+		"_postman_id": "tenant-admin-api-collection",
+		"name": "Tenant Admin API",
+		"description": "Complete API collection for Tenant Admin module - Event Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "Create Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"name\": \"TechConference2024\",\n  \"slug\": \"tech-conference-2024\",\n  \"description\": \"Annual technology conference featuring the latest innovations\",\n  \"venue\": \"Convention Center\",\n  \"city\": \"Dhaka\",\n  \"country\": \"Bangladesh\",\n  \"Start_at\": \"2024-12-01T09:00:00Z\",\n  \"End_at\": \"2024-12-03T18:00:00Z\",\n  \"status\": \"scheduled\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/events",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "events"]
+						}
+					}
+				},
+				{
+					"name": "Get All Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/events?tenantId={{tenantId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "events"],
+							"query": [
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Event By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/events/:eventId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "events", ":eventId"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eventId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Tech Conference 2024\",\n  \"description\": \"Updated description\",\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/events/:eventId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "events", ":eventId"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eventId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Event",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/events/:eventId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "events", ":eventId"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eventId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Event Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/events/:eventId/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "events", ":eventId", "stats"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eventId}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Event Sessions",
+			"item": [
+				{
+					"name": "Create Event Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_id\": \"{{eventId}}\",\n  \"title\": \"Keynote: Future of Technology\",\n  \"description\": \"Opening keynote session discussing emerging technologies\",\n  \"start_at\": \"2024-12-01T10:00:00Z\",\n  \"end_at\": \"2024-12-01T11:30:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/event-sessions",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "event-sessions"]
+						}
+					}
+				},
+				{
+					"name": "Get Event Sessions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/events/:eventId/sessions",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "events", ":eventId", "sessions"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eventId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Event Session By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/event-sessions/:sessionId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "event-sessions", ":sessionId"],
+							"variable": [
+								{
+									"key": "sessionId",
+									"value": "{{sessionId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Event Session",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Keynote Session\",\n  \"description\": \"Updated description\",\n  \"start_at\": \"2024-12-01T10:30:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/event-sessions/:sessionId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "event-sessions", ":sessionId"],
+							"variable": [
+								{
+									"key": "sessionId",
+									"value": "{{sessionId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Event Session",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/event-sessions/:sessionId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "event-sessions", ":sessionId"],
+							"variable": [
+								{
+									"key": "sessionId",
+									"value": "{{sessionId}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Ticket Types",
+			"item": [
+				{
+					"name": "Create Ticket Type",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_id\": \"{{eventId}}\",\n  \"name\": \"VIP Ticket\",\n  \"description\": \"VIP access with premium seating and exclusive benefits\",\n  \"price_taka\": 5000,\n  \"currency\": \"BDT\",\n  \"quantity_total\": 100,\n  \"quantity_sold\": 0,\n  \"sales_start\": \"2024-10-01T00:00:00Z\",\n  \"sales_end\": \"2024-11-30T23:59:59Z\",\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/ticket-types",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "ticket-types"]
+						}
+					}
+				},
+				{
+					"name": "Get Ticket Types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/events/:eventId/ticket-types",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "events", ":eventId", "ticket-types"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eventId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Ticket Type By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/ticket-types/:ticketTypeId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "ticket-types", ":ticketTypeId"],
+							"variable": [
+								{
+									"key": "ticketTypeId",
+									"value": "{{ticketTypeId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Ticket Type",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price_taka\": 5500,\n  \"quantity_total\": 150,\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/ticket-types/:ticketTypeId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "ticket-types", ":ticketTypeId"],
+							"variable": [
+								{
+									"key": "ticketTypeId",
+									"value": "{{ticketTypeId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Ticket Type",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/ticket-types/:ticketTypeId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "ticket-types", ":ticketTypeId"],
+							"variable": [
+								{
+									"key": "ticketTypeId",
+									"value": "{{ticketTypeId}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Discount Codes",
+			"item": [
+				{
+					"name": "Create Discount Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_id\": \"{{eventId}}\",\n  \"code\": \"EARLYBIRD2024\",\n  \"description\": \"Early bird discount for early registrations\",\n  \"max_redemptions\": 100,\n  \"times_redeemed\": 0,\n  \"discount_type\": \"percentage\",\n  \"discount_value\": 20,\n  \"starts_at\": \"2024-10-01T00:00:00Z\",\n  \"expires_at\": \"2024-11-15T23:59:59Z\",\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/discount-codes",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "discount-codes"]
+						}
+					}
+				},
+				{
+					"name": "Get Discount Codes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/events/:eventId/discount-codes",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "events", ":eventId", "discount-codes"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eventId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Discount Code By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/discount-codes/:discountCodeId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "discount-codes", ":discountCodeId"],
+							"variable": [
+								{
+									"key": "discountCodeId",
+									"value": "{{discountCodeId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Discount Code By Code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/discount-codes/code/:code",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "discount-codes", "code", ":code"],
+							"variable": [
+								{
+									"key": "code",
+									"value": "EARLYBIRD2024"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Discount Code",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"discount_value\": 25,\n  \"max_redemptions\": 150,\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/discount-codes/:discountCodeId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "discount-codes", ":discountCodeId"],
+							"variable": [
+								{
+									"key": "discountCodeId",
+									"value": "{{discountCodeId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Discount Code",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/discount-codes/:discountCodeId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "discount-codes", ":discountCodeId"],
+							"variable": [
+								{
+									"key": "discountCodeId",
+									"value": "{{discountCodeId}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Create Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tenant_id\": \"{{tenantId}}\",\n  \"event_id\": \"{{eventId}}\",\n  \"buyer_email\": \"buyer@example.com\",\n  \"buyer_name\": \"John Doe\",\n  \"total_taka\": 5000,\n  \"currency\": \"BDT\",\n  \"status\": \"pending\",\n  \"payment_intent_id\": \"pi_1234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/orders",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "orders"]
+						}
+					}
+				},
+				{
+					"name": "Get All Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/orders?tenantId={{tenantId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "orders"],
+							"query": [
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Orders By Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/orders?tenantId={{tenantId}}&eventId={{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "orders"],
+							"query": [
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eventId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Order By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/orders/:orderId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "orders", ":orderId"],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Order",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"completed\",\n  \"payment_intent_id\": \"pi_1234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/orders/:orderId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "orders", ":orderId"],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Order",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/orders/:orderId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "orders", ":orderId"],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tickets",
+			"item": [
+				{
+					"name": "Create Ticket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order_id\": \"{{orderId}}\",\n  \"ticket_type_id\": \"{{ticketTypeId}}\",\n  \"attendee_name\": \"Jane Smith\",\n  \"attendee_email\": \"jane.smith@example.com\",\n  \"qr_code_payload\": \"ticket-uuid-12345\",\n  \"qr_signature\": \"signature-hash-abc123\",\n  \"status\": \"valid\",\n  \"seat_label\": \"A-12\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/tickets",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "tickets"]
+						}
+					}
+				},
+				{
+					"name": "Get All Tickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/tickets",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "tickets"]
+						}
+					}
+				},
+				{
+					"name": "Get Tickets By Order",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/tickets?orderId={{orderId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "tickets"],
+							"query": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Ticket By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/tickets/:ticketId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "tickets", ":ticketId"],
+							"variable": [
+								{
+									"key": "ticketId",
+									"value": "{{ticketId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Tickets By Email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/tickets/email/:email",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "tickets", "email", ":email"],
+							"variable": [
+								{
+									"key": "email",
+									"value": "jane.smith@example.com"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Ticket",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"attendee_name\": \"Jane Doe\",\n  \"seat_label\": \"A-15\",\n  \"status\": \"valid\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/tickets/:ticketId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "tickets", ":ticketId"],
+							"variable": [
+								{
+									"key": "ticketId",
+									"value": "{{ticketId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Check In Ticket",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/tickets/:ticketId/check-in",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "tickets", ":ticketId", "check-in"],
+							"variable": [
+								{
+									"key": "ticketId",
+									"value": "{{ticketId}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Ticket",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tenant-admin/tickets/:ticketId",
+							"host": ["{{baseUrl}}"],
+							"path": ["tenant-admin", "tickets", ":ticketId"],
+							"variable": [
+								{
+									"key": "ticketId",
+									"value": "{{ticketId}}"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "tenantId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "eventId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "sessionId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ticketTypeId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "discountCodeId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "orderId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ticketId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+

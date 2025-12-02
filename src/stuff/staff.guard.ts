@@ -11,9 +11,15 @@ export class StaffGuard implements CanActivate {
       throw new ForbiddenException('User not found in request');
     }
 
-    // Check if user has staff role
-    if (user.role !== 'STAFF' && user.role !== 'ADMIN' && user.role !== 'SUPERADMIN') {
-      throw new ForbiddenException('Only staff members can access this resource');
+    // Check if user has staff role (lowercase 'staff' as per auth.service.ts)
+    // Also allow platform admin and TenantAdmin to manage staff
+    if (
+      user.role !== 'staff' &&
+      user.role !== 'TenantAdmin' &&
+      !user.isPlatformAdmin &&
+      user.role !== 'platform_admin'
+    ) {
+      throw new ForbiddenException('Only staff members, tenant admins, or platform admins can access this resource');
     }
 
     return true;

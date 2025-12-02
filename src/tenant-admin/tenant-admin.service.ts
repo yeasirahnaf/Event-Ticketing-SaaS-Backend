@@ -1,19 +1,38 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Event, EventSession, TicketType, DiscountCode, Order, Ticket } from './tenant-entity';
-import { 
-  createEventsDto, EventSessionsDto, CreateTicketsDto, DiscountCodesDto, OrdersDto, TicketsDto,
-  EventStatus, TicketTypeStatus, DiscountStatus, OrderStatus, TicketStatus 
+import {
+  Event,
+  EventSession,
+  TicketType,
+  DiscountCode,
+  Order,
+  Ticket,
+} from './tenant-entity';
+import {
+  createEventsDto,
+  EventSessionsDto,
+  CreateTicketsDto,
+  DiscountCodesDto,
+  OrdersDto,
+  TicketsDto,
+  EventStatus,
+  TicketTypeStatus,
+  DiscountStatus,
+  OrderStatus,
+  TicketStatus,
 } from './tenant-admin.dto';
 
 @Injectable()
 export class TenantAdminService {
   constructor(
     @InjectRepository(Event) private eventRepository: Repository<Event>,
-    @InjectRepository(EventSession) private eventSessionRepository: Repository<EventSession>,
-    @InjectRepository(TicketType) private ticketTypeRepository: Repository<TicketType>,
-    @InjectRepository(DiscountCode) private discountCodeRepository: Repository<DiscountCode>,
+    @InjectRepository(EventSession)
+    private eventSessionRepository: Repository<EventSession>,
+    @InjectRepository(TicketType)
+    private ticketTypeRepository: Repository<TicketType>,
+    @InjectRepository(DiscountCode)
+    private discountCodeRepository: Repository<DiscountCode>,
     @InjectRepository(Order) private orderRepository: Repository<Order>,
     @InjectRepository(Ticket) private ticketRepository: Repository<Ticket>,
   ) {}
@@ -41,12 +60,17 @@ export class TenantAdminService {
     return event;
   }
 
-  async updateEvent(eventId: string, updateEventsDto: Partial<createEventsDto>): Promise<Event> {
+  async updateEvent(
+    eventId: string,
+    updateEventsDto: Partial<createEventsDto>,
+  ): Promise<Event> {
     await this.eventRepository.update(eventId, updateEventsDto);
     return await this.getEventById(eventId);
   }
 
-  async deleteEvent(eventId: string): Promise<{ success: boolean; message: string }> {
+  async deleteEvent(
+    eventId: string,
+  ): Promise<{ success: boolean; message: string }> {
     const result = await this.eventRepository.delete(eventId);
     if (result.affected === 0) {
       return { success: false, message: 'Event not found' };
@@ -54,7 +78,9 @@ export class TenantAdminService {
     return { success: true, message: 'Event deleted successfully' };
   }
 
-  async createEventSession(eventSessionDto: EventSessionsDto): Promise<EventSession> {
+  async createEventSession(
+    eventSessionDto: EventSessionsDto,
+  ): Promise<EventSession> {
     const session = this.eventSessionRepository.create(eventSessionDto);
     return await this.eventSessionRepository.save(session);
   }
@@ -72,17 +98,24 @@ export class TenantAdminService {
       relations: ['event'],
     });
     if (!session) {
-      throw new NotFoundException(`Event session with ID ${sessionId} not found`);
+      throw new NotFoundException(
+        `Event session with ID ${sessionId} not found`,
+      );
     }
     return session;
   }
 
-  async updateEventSession(sessionId: string, updateSessionDto: Partial<EventSessionsDto>): Promise<EventSession> {
+  async updateEventSession(
+    sessionId: string,
+    updateSessionDto: Partial<EventSessionsDto>,
+  ): Promise<EventSession> {
     await this.eventSessionRepository.update(sessionId, updateSessionDto);
     return await this.getEventSessionById(sessionId);
   }
 
-  async deleteEventSession(sessionId: string): Promise<{ success: boolean; message: string }> {
+  async deleteEventSession(
+    sessionId: string,
+  ): Promise<{ success: boolean; message: string }> {
     const result = await this.eventSessionRepository.delete(sessionId);
     if (result.affected === 0) {
       return { success: false, message: 'Event session not found' };
@@ -90,7 +123,9 @@ export class TenantAdminService {
     return { success: true, message: 'Event session deleted successfully' };
   }
 
-  async createTicketType(createTicketDto: CreateTicketsDto): Promise<TicketType> {
+  async createTicketType(
+    createTicketDto: CreateTicketsDto,
+  ): Promise<TicketType> {
     const ticketType = this.ticketTypeRepository.create(createTicketDto);
     return await this.ticketTypeRepository.save(ticketType);
   }
@@ -108,17 +143,24 @@ export class TenantAdminService {
       relations: ['event', 'tickets'],
     });
     if (!ticketType) {
-      throw new NotFoundException(`Ticket type with ID ${ticketTypeId} not found`);
+      throw new NotFoundException(
+        `Ticket type with ID ${ticketTypeId} not found`,
+      );
     }
     return ticketType;
   }
 
-  async updateTicketType(ticketTypeId: string, updateTicketDto: Partial<CreateTicketsDto>): Promise<TicketType> {
+  async updateTicketType(
+    ticketTypeId: string,
+    updateTicketDto: Partial<CreateTicketsDto>,
+  ): Promise<TicketType> {
     await this.ticketTypeRepository.update(ticketTypeId, updateTicketDto);
     return await this.getTicketTypeById(ticketTypeId);
   }
 
-  async deleteTicketType(ticketTypeId: string): Promise<{ success: boolean; message: string }> {
+  async deleteTicketType(
+    ticketTypeId: string,
+  ): Promise<{ success: boolean; message: string }> {
     const result = await this.ticketTypeRepository.delete(ticketTypeId);
     if (result.affected === 0) {
       return { success: false, message: 'Ticket type not found' };
@@ -126,7 +168,9 @@ export class TenantAdminService {
     return { success: true, message: 'Ticket type deleted successfully' };
   }
 
-  async createDiscountCode(discountCodeDto: DiscountCodesDto): Promise<DiscountCode> {
+  async createDiscountCode(
+    discountCodeDto: DiscountCodesDto,
+  ): Promise<DiscountCode> {
     const discountCode = this.discountCodeRepository.create(discountCodeDto);
     return await this.discountCodeRepository.save(discountCode);
   }
@@ -144,7 +188,9 @@ export class TenantAdminService {
       relations: ['event'],
     });
     if (!discountCode) {
-      throw new NotFoundException(`Discount code with ID ${discountCodeId} not found`);
+      throw new NotFoundException(
+        `Discount code with ID ${discountCodeId} not found`,
+      );
     }
     return discountCode;
   }
@@ -160,12 +206,17 @@ export class TenantAdminService {
     return discountCode;
   }
 
-  async updateDiscountCode(discountCodeId: string, updateDiscountDto: Partial<DiscountCodesDto>): Promise<DiscountCode> {
+  async updateDiscountCode(
+    discountCodeId: string,
+    updateDiscountDto: Partial<DiscountCodesDto>,
+  ): Promise<DiscountCode> {
     await this.discountCodeRepository.update(discountCodeId, updateDiscountDto);
     return await this.getDiscountCodeById(discountCodeId);
   }
 
-  async deleteDiscountCode(discountCodeId: string): Promise<{ success: boolean; message: string }> {
+  async deleteDiscountCode(
+    discountCodeId: string,
+  ): Promise<{ success: boolean; message: string }> {
     const result = await this.discountCodeRepository.delete(discountCodeId);
     if (result.affected === 0) {
       return { success: false, message: 'Discount code not found' };
@@ -179,14 +230,16 @@ export class TenantAdminService {
   }
 
   async getOrders(tenantId: string, eventId?: string): Promise<Order[]> {
-    const query = this.orderRepository.createQueryBuilder('order')
+    const query = this.orderRepository
+      .createQueryBuilder('order')
       .where('order.tenant_id = :tenantId', { tenantId });
 
     if (eventId) {
       query.andWhere('order.event_id = :eventId', { eventId });
     }
 
-    return await query.leftJoinAndSelect('order.event', 'event')
+    return await query
+      .leftJoinAndSelect('order.event', 'event')
       .leftJoinAndSelect('order.tickets', 'tickets')
       .getMany();
   }
@@ -202,12 +255,17 @@ export class TenantAdminService {
     return order;
   }
 
-  async updateOrder(orderId: string, updateOrderDto: Partial<OrdersDto>): Promise<Order> {
+  async updateOrder(
+    orderId: string,
+    updateOrderDto: Partial<OrdersDto>,
+  ): Promise<Order> {
     await this.orderRepository.update(orderId, updateOrderDto);
     return await this.getOrderById(orderId);
   }
 
-  async deleteOrder(orderId: string): Promise<{ success: boolean; message: string }> {
+  async deleteOrder(
+    orderId: string,
+  ): Promise<{ success: boolean; message: string }> {
     const result = await this.orderRepository.delete(orderId);
     if (result.affected === 0) {
       return { success: false, message: 'Order not found' };
@@ -227,7 +285,8 @@ export class TenantAdminService {
       query.where('ticket.order_id = :orderId', { orderId });
     }
 
-    return await query.leftJoinAndSelect('ticket.order', 'order')
+    return await query
+      .leftJoinAndSelect('ticket.order', 'order')
       .leftJoinAndSelect('ticket.ticketType', 'ticketType')
       .getMany();
   }
@@ -250,12 +309,17 @@ export class TenantAdminService {
     });
   }
 
-  async updateTicket(ticketId: string, updateTicketDto: Partial<TicketsDto>): Promise<Ticket> {
+  async updateTicket(
+    ticketId: string,
+    updateTicketDto: Partial<TicketsDto>,
+  ): Promise<Ticket> {
     await this.ticketRepository.update(ticketId, updateTicketDto);
     return await this.getTicketById(ticketId);
   }
 
-  async deleteTicket(ticketId: string): Promise<{ success: boolean; message: string }> {
+  async deleteTicket(
+    ticketId: string,
+  ): Promise<{ success: boolean; message: string }> {
     const result = await this.ticketRepository.delete(ticketId);
     if (result.affected === 0) {
       return { success: false, message: 'Ticket not found' };
@@ -276,12 +340,25 @@ export class TenantAdminService {
     totalRevenue: number;
     ordersCount: number;
   }> {
-    const ticketTypes = await this.ticketTypeRepository.find({ where: { event_id: eventId } });
-    const orders = await this.orderRepository.find({ where: { event_id: eventId } });
+    const ticketTypes = await this.ticketTypeRepository.find({
+      where: { event_id: eventId },
+    });
+    const orders = await this.orderRepository.find({
+      where: { event_id: eventId },
+    });
 
-    const totalTicketsAvailable = ticketTypes.reduce((sum, tt) => sum + tt.quantity_total, 0);
-    const totalTicketsSold = ticketTypes.reduce((sum, tt) => sum + tt.quantity_sold, 0);
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.total_taka || 0), 0);
+    const totalTicketsAvailable = ticketTypes.reduce(
+      (sum, tt) => sum + tt.quantity_total,
+      0,
+    );
+    const totalTicketsSold = ticketTypes.reduce(
+      (sum, tt) => sum + tt.quantity_sold,
+      0,
+    );
+    const totalRevenue = orders.reduce(
+      (sum, order) => sum + (order.total_taka || 0),
+      0,
+    );
 
     return {
       totalTicketsAvailable,

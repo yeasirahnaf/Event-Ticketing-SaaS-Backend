@@ -120,15 +120,16 @@ export class StaffController {
    * TICKET CHECK-IN & TICKET LIST
    */
 
-  // POST /staff/:id/checkin
-  @Post(':id/checkin')
+  // POST /staff/checkin
+  @Post('checkin')
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   @HttpCode(HttpStatus.OK)
   async checkInTicket(
-    @Param('id', new ParseUUIDPipe()) staffId: string,
+    @CurrentUser() user: any,
     @Body() checkinDto: CheckinDto,
   ) {
-    const result = await this.staffService.checkInTicket(staffId, checkinDto);
+    // Use staff ID from current user context
+    const result = await this.staffService.checkInTicket(user.id, checkinDto);
 
     return {
       statusCode: 200,
@@ -293,6 +294,170 @@ export class StaffController {
       message: 'Search completed successfully',
       data: tickets,
       count: tickets.length,
+    };
+  }
+
+  /**
+   * EVENT READ-ONLY ENDPOINTS (Per Plan Requirements)
+   */
+
+  // GET /staff/events
+  @Get('events')
+  @HttpCode(HttpStatus.OK)
+  async getTenantEvents(
+    @CurrentUser() user: any,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pageNumber = page ? parseInt(page, 10) || 1 : 1;
+    const limitNumber = limit ? parseInt(limit, 10) || 20 : 20;
+
+    const result = await this.staffService.getTenantEvents(
+      user.tenantId,
+      pageNumber,
+      limitNumber,
+    );
+
+    return {
+      statusCode: 200,
+      message: 'Events retrieved successfully',
+      data: result.data,
+      pagination: {
+        page: result.page,
+        limit: limitNumber,
+        total: result.total,
+        totalPages: Math.ceil(result.total / limitNumber),
+      },
+    };
+  }
+
+  // GET /staff/events/:id
+  @Get('events/:id')
+  @HttpCode(HttpStatus.OK)
+  async getEventById(
+    @CurrentUser() user: any,
+    @Param('id', new ParseUUIDPipe()) eventId: string,
+  ) {
+    const event = await this.staffService.getEventById(
+      user.tenantId,
+      eventId,
+    );
+
+    return {
+      statusCode: 200,
+      message: 'Event retrieved successfully',
+      data: event,
+    };
+  }
+
+  // GET /staff/events/:id/ticket-types
+  @Get('events/:id/ticket-types')
+  @HttpCode(HttpStatus.OK)
+  async getEventTicketTypes(
+    @CurrentUser() user: any,
+    @Param('id', new ParseUUIDPipe()) eventId: string,
+  ) {
+    const ticketTypes = await this.staffService.getEventTicketTypes(
+      user.tenantId,
+      eventId,
+    );
+
+    return {
+      statusCode: 200,
+      message: 'Ticket types retrieved successfully',
+      data: ticketTypes,
+    };
+  }
+
+  // GET /staff/events/:id/capacity
+  @Get('events/:id/capacity')
+  @HttpCode(HttpStatus.OK)
+  async getEventCapacity(
+    @CurrentUser() user: any,
+    @Param('id', new ParseUUIDPipe()) eventId: string,
+  ) {
+    const capacity = await this.staffService.getEventCapacity(
+      user.tenantId,
+      eventId,
+    );
+
+    return {
+      statusCode: 200,
+      message: 'Event capacity retrieved successfully',
+      data: capacity,
+    };
+  }
+
+  /**
+   * ORDER LOOKUP ENDPOINTS (Per Plan Requirements)
+   */
+
+  // GET /staff/orders/search?email=...
+  @Get('orders/search')
+  @HttpCode(HttpStatus.OK)
+  async searchOrdersByEmail(
+    @CurrentUser() user: any,
+    @Query('email') email?: string,
+    @Query('code') code?: string,
+  ) {
+    if (email) {
+      const orders = await this.staffService.searchOrdersByEmail(
+        user.tenantId,
+        email,
+      );
+
+      return {
+        statusCode: 200,
+        message: 'Orders found by email',
+        data: orders,
+        count: orders.length,
+      };
+    }
+
+    if (code) {
+      const order = await this.staffService.searchOrderByCode(
+        user.tenantId,
+        code,
+      );
+
+      if (!order) {
+        return {
+          statusCode: 404,
+          message: 'Order not found',
+          data: null,
+        };
+      }
+
+      return {
+        statusCode: 200,
+        message: 'Order found by code',
+        data: order,
+      };
+    }
+
+    return {
+      statusCode: 400,
+      message: 'Either email or code query parameter is required',
+      data: [],
+    };
+  }
+
+  // GET /staff/orders/:id
+  @Get('orders/:id')
+  @HttpCode(HttpStatus.OK)
+  async getOrderById(
+    @CurrentUser() user: any,
+    @Param('id', new ParseUUIDPipe()) orderId: string,
+  ) {
+    const order = await this.staffService.getOrderById(
+      user.tenantId,
+      orderId,
+    );
+
+    return {
+      statusCode: 200,
+      message: 'Order retrieved successfully',
+      data: order,
     };
   }
 }

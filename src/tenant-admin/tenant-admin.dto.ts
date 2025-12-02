@@ -1,4 +1,14 @@
-import { IsNotEmpty, IsOptional, IsString, Matches, MaxLength, IsNumber, Min, IsPositive, IsEnum } from "class-validator";
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+  IsNumber,
+  Min,
+  IsPositive,
+  IsEnum,
+} from 'class-validator';
 
 export enum EventStatus {
   DRAFT = 'draft',
@@ -13,9 +23,13 @@ export class createEventsDto {
   @IsString()
   tenantId: string;
 
-  @IsNotEmpty({message: 'Please enter a valid name'}) 
-  @MaxLength(150, {message: 'Name is too long. Maximum length is 150 characters'})
-  @Matches(/^[a-zA-Z]+$/, { message: 'Name should contain only alphabetic characters' })
+  @IsNotEmpty({ message: 'Please enter a valid name' })
+  @MaxLength(150, {
+    message: 'Name is too long. Maximum length is 150 characters',
+  })
+  @Matches(/^[a-zA-Z]+$/, {
+    message: 'Name should contain only alphabetic characters',
+  })
   @IsString()
   name: string;
 
@@ -51,7 +65,7 @@ export class createEventsDto {
   @IsOptional()
   @IsEnum(EventStatus)
   status?: EventStatus;
-  
+
   @IsOptional()
   created_at?: Date;
 
@@ -66,7 +80,9 @@ export class EventSessionsDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(200, { message: 'Title is too long. Maximum length is 200 characters' })
+  @MaxLength(200, {
+    message: 'Title is too long. Maximum length is 200 characters',
+  })
   title: string;
 
   @IsNotEmpty()
@@ -95,7 +111,9 @@ export class CreateTicketsDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(150, { message: 'Name is too long. Maximum length is 150 characters' })
+  @MaxLength(150, {
+    message: 'Name is too long. Maximum length is 150 characters',
+  })
   name: string;
 
   @IsNotEmpty()
@@ -150,7 +168,9 @@ export class DiscountCodesDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(50, { message: 'Code is too long. Maximum length is 50 characters' })
+  @MaxLength(50, {
+    message: 'Code is too long. Maximum length is 50 characters',
+  })
   code: string;
 
   @IsNotEmpty()
@@ -210,7 +230,9 @@ export class OrdersDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(150, { message: 'Buyer name is too long. Maximum length is 150 characters' })
+  @MaxLength(150, {
+    message: 'Buyer name is too long. Maximum length is 150 characters',
+  })
   buyer_name: string;
 
   @IsNotEmpty()
@@ -256,7 +278,9 @@ export class TicketsDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(150, { message: 'Attendee name is too long. Maximum length is 150 characters' })
+  @MaxLength(150, {
+    message: 'Attendee name is too long. Maximum length is 150 characters',
+  })
   attendee_name: string;
 
   @IsNotEmpty()
@@ -280,6 +304,8 @@ export class TicketsDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(50, { message: 'Seat label is too long. Maximum length is 50 characters' })
+  @MaxLength(50, {
+    message: 'Seat label is too long. Maximum length is 50 characters',
+  })
   seat_label?: string;
 }

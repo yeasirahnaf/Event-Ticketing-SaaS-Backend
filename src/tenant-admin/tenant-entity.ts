@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity('events')
 export class Event {
@@ -41,16 +50,16 @@ export class Event {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany(() => EventSession, session => session.event)
+  @OneToMany(() => EventSession, (session) => session.event)
   sessions: EventSession[];
 
-  @OneToMany(() => TicketType, ticketType => ticketType.event)
+  @OneToMany(() => TicketType, (ticketType) => ticketType.event)
   ticketTypes: TicketType[];
 
-  @OneToMany(() => DiscountCode, discountCode => discountCode.event)
+  @OneToMany(() => DiscountCode, (discountCode) => discountCode.event)
   discountCodes: DiscountCode[];
 
-  @OneToMany(() => Order, order => order.event)
+  @OneToMany(() => Order, (order) => order.event)
   orders: Order[];
 }
 
@@ -80,7 +89,7 @@ export class EventSession {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Event, event => event.sessions)
+  @ManyToOne(() => Event, (event) => event.sessions)
   @JoinColumn({ name: 'event_id' })
   event: Event;
 }
@@ -126,11 +135,11 @@ export class TicketType {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Event, event => event.ticketTypes)
+  @ManyToOne(() => Event, (event) => event.ticketTypes)
   @JoinColumn({ name: 'event_id' })
   event: Event;
 
-  @OneToMany(() => Ticket, ticket => ticket.ticketType)
+  @OneToMany(() => Ticket, (ticket) => ticket.ticketType)
   tickets: Ticket[];
 }
 
@@ -175,7 +184,7 @@ export class DiscountCode {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Event, event => event.discountCodes)
+  @ManyToOne(() => Event, (event) => event.discountCodes)
   @JoinColumn({ name: 'event_id' })
   event: Event;
 }
@@ -215,11 +224,11 @@ export class Order {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Event, event => event.orders)
+  @ManyToOne(() => Event, (event) => event.orders)
   @JoinColumn({ name: 'event_id' })
   event: Event;
 
-  @OneToMany(() => Ticket, ticket => ticket.order)
+  @OneToMany(() => Ticket, (ticket) => ticket.order)
   tickets: Ticket[];
 }
 
@@ -261,11 +270,11 @@ export class Ticket {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Order, order => order.tickets)
+  @ManyToOne(() => Order, (order) => order.tickets)
   @JoinColumn({ name: 'order_id' })
   order: Order;
 
-  @ManyToOne(() => TicketType, ticketType => ticketType.tickets)
+  @ManyToOne(() => TicketType, (ticketType) => ticketType.tickets)
   @JoinColumn({ name: 'ticket_type_id' })
   ticketType: TicketType;
 }

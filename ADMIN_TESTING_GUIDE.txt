@@ -66,16 +66,21 @@ INSERT INTO users (id, email, password_hash, full_name, is_platform_admin, creat
 VALUES (
   gen_random_uuid(),
   'admin@example.com',
-  '$2b$10$YourBcryptHashHere',  -- Use bcrypt to hash 'password123'
+  '$2b$10$w0z/FfJYm4kR40VZLIbDnOB.PwUboavIypeTPZkhStoKGLaCHv8xW',  -- bcrypt hash for 'password123'
   'Platform Admin',
   true,
   NOW(),
   NOW()
 );
 
-To generate bcrypt hash, you can use Node.js:
+IMPORTANT: If you already inserted a user with the placeholder hash, update it with:
+UPDATE users 
+SET password_hash = '$2b$10$w0z/FfJYm4kR40VZLIbDnOB.PwUboavIypeTPZkhStoKGLaCHv8xW'
+WHERE email = 'admin@example.com';
+
+To generate a new bcrypt hash for a different password, you can use Node.js:
 const bcrypt = require('bcrypt');
-bcrypt.hash('password123', 10).then(hash => console.log(hash));
+bcrypt.hash('your_password_here', 10).then(hash => console.log(hash));
 
 ================================================================================
 3. TESTING WORKFLOW
