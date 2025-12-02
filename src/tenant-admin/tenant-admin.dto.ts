@@ -43,19 +43,19 @@ export class createEventsDto {
   country: string;
 
   @IsNotEmpty()
-  Start_at: Date;
+  start_at: Date;
 
   @IsNotEmpty()
-  End_at: Date;
+  end_at: Date;
 
   @IsOptional()
   @IsEnum(EventStatus)
   status?: EventStatus;
   
-  @IsOptional()
+  
   created_at?: Date;
 
-  @IsOptional()
+  
   updated_at?: Date;
 }
 

@@ -1,10 +1,15 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { TenantAdminService } from './tenant-admin.service';
 import { createEventsDto, EventSessionsDto, CreateTicketsDto, DiscountCodesDto, OrdersDto, TicketsDto } from './tenant-admin.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 
 @Controller('tenant-admin')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('TenantAdmin')
 export class TenantAdminController {
-  constructor(private readonly tenantAdminService: TenantAdminService) {}
+  constructor(private readonly tenantAdminService: TenantAdminService) { }
 
   @Post('events')
   async createEvent(@Body() createEventsDto: createEventsDto) {

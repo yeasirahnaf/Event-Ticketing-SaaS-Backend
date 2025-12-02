@@ -1,0 +1,203 @@
+{
+  "event": {
+    "create": {
+      "tenantId": "yeasir 101",
+      "name": "DhakaRockFestival",
+      "slug": "dhaka-rock-festival-2025",
+      "description": "A major rock music festival in Dhaka featuring top local and international rock bands",
+      "venue": "Suhrawardy Udyan",
+      "city": "Dhaka",
+      "country": "Bangladesh",
+      "start_at": "2025-12-15T10:00:00Z",
+      "end_at": "2025-12-17T22:00:00Z",
+      "status": "draft"
+    },
+    "update": {
+      "name": "DhakaRockFestival",
+      "slug": "dhaka-rock-festival-2025",
+      "description": "An amazing rock festival in Bangladesh featuring international and local artists",
+      "venue": "Suhrawardy Udyan",
+      "city": "Dhaka",
+      "country": "Bangladesh",
+      "status": "active"
+    }
+  },
+  "session": {
+    "create": {
+      "event_id": "{{eventId}}",
+      "title": "Opening Night",
+      "description": "Opening day with headliner performances from top artists",
+      "start_at": "2025-07-01T12:00:00Z",
+      "end_at": "2025-07-01T23:00:00Z"
+    },
+    "update": {
+      "title": "Day1Extravaganza",
+      "description": "Opening day with extended headliner performances and special guests",
+      "start_at": "2025-07-01T11:00:00Z",
+      "end_at": "2025-07-02T00:00:00Z"
+    }
+  },
+  "ticketType": {
+    "create_ga": {
+      "event_id": "{{eventId}}",
+      "name": "GeneralAdmission",
+      "description": "General admission pass valid for all festival days",
+      "price_taka": 2999,
+      "currency": "BDT",
+      "quantity_total": 500,
+      "quantity_sold": 0,
+      "sales_start": "2025-11-01T00:00:00Z",
+      "sales_end": "2025-12-14T23:59:59Z",
+      "status": "active"
+    },
+    "create_vip": {
+      "event_id": "{{eventId}}",
+      "name": "VIPPass",
+      "description": "VIP pass with front row seating and exclusive meet and greet",
+      "price_taka": 7999,
+      "currency": "BDT",
+      "quantity_total": 50,
+      "quantity_sold": 0,
+      "sales_start": "2025-11-01T00:00:00Z",
+      "sales_end": "2025-12-14T23:59:59Z",
+      "status": "active"
+    },
+    "update": {
+      "name": "GeneralAdmissionUpdated",
+      "description": "Updated GA pass with special early bird discount",
+      "price_taka": 3499,
+      "status": "paused"
+    }
+  },
+  "discount": {
+    "create_percentage": {
+      "event_id": "{{eventId}}",
+      "code": "EARLY20",
+      "description": "Early bird discount offering twenty percent off",
+      "max_redemptions": 100,
+      "times_redeemed": 0,
+      "discount_type": "percentage",
+      "discount_value": 20,
+      "starts_at": "2025-11-01T00:00:00Z",
+      "expires_at": "2025-11-15T23:59:59Z",
+      "status": "active"
+    },
+    "create_flat": {
+      "event_id": "{{eventId}}",
+      "code": "FLAT500",
+      "description": "Flat amount discount for early buyers",
+      "max_redemptions": 50,
+      "times_redeemed": 0,
+      "discount_type": "fixed_amount",
+      "discount_value": 500,
+      "starts_at": "2025-11-15T00:00:00Z",
+      "expires_at": "2025-11-25T23:59:59Z",
+      "status": "active"
+    },
+    "update": {
+      "code": "EARLY20",
+      "description": "Extended early bird discount for supporters",
+      "discount_value": 25,
+      "status": "expired"
+    }
+  },
+  "order": {
+    "create_1": {
+      "tenant_id": "yeasir 101",
+      "event_id": "{{eventId}}",
+      "buyer_email": "karim@example.com",
+      "buyer_name": "Karim Ahmed",
+      "total_taka": 5998,
+      "currency": "BDT",
+      "status": "pending",
+      "payment_intent_id": "pi_test_1234567890"
+    },
+    "create_2": {
+      "tenant_id": "yeasir 101",
+      "event_id": "{{eventId}}",
+      "buyer_email": "fatima@example.com",
+      "buyer_name": "Fatima Khan",
+      "total_taka": 7999,
+      "currency": "BDT",
+      "status": "completed",
+      "payment_intent_id": "pi_test_9876543210"
+    },
+    "update": {
+      "status": "completed"
+    }
+  },
+  "ticket": {
+    "create_1": {
+      "order_id": "{{orderId}}",
+      "ticket_type_id": "{{ticketTypeId}}",
+      "attendee_name": "Karim Ahmed",
+      "attendee_email": "karim@example.com",
+      "qr_code_payload": "TICKET_ABC123_1",
+      "qr_signature": "sig_abc123def456",
+      "status": "valid",
+      "seat_label": "A-101"
+    },
+    "create_2": {
+      "order_id": "{{orderId}}",
+      "ticket_type_id": "{{ticketTypeId}}",
+      "attendee_name": "Nadia Khan",
+      "attendee_email": "nadia@example.com",
+      "qr_code_payload": "TICKET_ABC123_2",
+      "qr_signature": "sig_xyz789uvw123",
+      "status": "valid",
+      "seat_label": "A-102"
+    },
+    "create_vip": {
+      "order_id": "{{orderId}}",
+      "ticket_type_id": "{{vipTicketTypeId}}",
+      "attendee_name": "Rana Hassan",
+      "attendee_email": "rana@example.com",
+      "qr_code_payload": "TICKET_XYZ456_VIP",
+      "qr_signature": "sig_pqr456stu789",
+      "status": "valid",
+      "seat_label": "VIP001"
+    }
+  },
+  "validation_notes": {
+    "event": "name: alphabetic only, max 150 chars; slug: lowercase alphanumeric with hyphens; description: required; dates: required",
+    "session": "title: max 200 chars; description: required; dates: required",
+    "ticketType": "name: max 150 chars; price_taka: positive number; currency: required; quantity fields: positive integers",
+    "discount": "code: max 50 chars; discount_type: 'percentage' or 'fixed_amount'; discount_value: positive number",
+    "order": "buyer_name: max 150 chars; total_taka: positive number; status: pending|completed|failed|cancelled|refunded",
+    "ticket": "attendee_name: max 150 chars; attendee_email: string; qr_payload: required; status: valid|scanned|used|cancelled|refunded"
+  },
+  "routes_testing_guide": {
+    "note": "Replace {{eventId}}, {{orderId}}, {{ticketTypeId}} etc with actual IDs from created resources",
+    "routes_count": 30,
+    "testing_sequence": [
+      "POST /tenant-admin/events (Create Event)",
+      "GET /tenant-admin/events/:id (Get Event)",
+      "PUT /tenant-admin/events/:id (Update Event)",
+      "GET /tenant-admin/events (Get All Events)",
+      "POST /tenant-admin/sessions (Create Session)",
+      "GET /tenant-admin/sessions/:id (Get Session)",
+      "PUT /tenant-admin/sessions/:id (Update Session)",
+      "POST /tenant-admin/ticket-types (Create Ticket Type)",
+      "GET /tenant-admin/ticket-types/:id (Get Ticket Type)",
+      "GET /tenant-admin/ticket-types (Get All Ticket Types)",
+      "POST /tenant-admin/discount-codes (Create Discount)",
+      "GET /tenant-admin/discount-codes/:id (Get Discount)",
+      "GET /tenant-admin/discount-codes (Get All Discounts)",
+      "POST /tenant-admin/orders (Create Order)",
+      "GET /tenant-admin/orders/:id (Get Order)",
+      "PUT /tenant-admin/orders/:id (Update Order)",
+      "GET /tenant-admin/orders (Get All Orders)",
+      "POST /tenant-admin/tickets (Create Ticket)",
+      "GET /tenant-admin/tickets/:id (Get Ticket)",
+      "GET /tenant-admin/tickets (Get All Tickets)",
+      "POST /tenant-admin/tickets/:id/check-in (Check In Ticket)",
+      "GET /tenant-admin/events/:id/stats (Get Event Stats)",
+      "DELETE /tenant-admin/tickets/:id (Delete Ticket)",
+      "DELETE /tenant-admin/orders/:id (Delete Order)",
+      "DELETE /tenant-admin/discount-codes/:id (Delete Discount)",
+      "DELETE /tenant-admin/ticket-types/:id (Delete Ticket Type)",
+      "DELETE /tenant-admin/sessions/:id (Delete Session)",
+      "DELETE /tenant-admin/events/:id (Delete Event)"
+    ]
+  }
+}
