@@ -11,21 +11,22 @@
 -- ============================================================================
 -- 1. USERS (Platform Users)
 -- ============================================================================
--- Password: Password@123 (bcrypt hash: $2b$10$rOzJqZqZqZqZqZqZqZqZqOqZqZqZqZqZqZqZqZqZqZqZqZqZqZq)
--- Using a standard bcrypt hash for "Password@123"
+-- Password hashes:
+-- Admin@123: $2b$10$f9DPIIp2n.jKFToES3EALeds3yVewJgm9EbTpoIo2aXeXXdAxCxg6
+-- Password@123: $2b$10$MZKl4w0Wt2CoJq14kgzpmeyoa9ZV/VlfeqFqurahxy5dq27OJHQ8a
 
 INSERT INTO users (id, email, password_hash, full_name, is_platform_admin, created_at, updated_at) VALUES
--- Platform Admin
-('a0000000-0000-0000-0000-000000000001', 'admin@platform.com', '$2b$10$rOzJqZqZqZqZqZqZqZqZqOqZqZqZqZqZqZqZqZqZqZqZqZqZq', 'Platform Admin', true, NOW(), NOW()),
+-- Platform Admin (Password: Admin@123)
+('a0000000-0000-0000-0000-000000000001', 'admin@platform.com', '$2b$10$f9DPIIp2n.jKFToES3EALeds3yVewJgm9EbTpoIo2aXeXXdAxCxg6', 'Platform Admin', true, NOW(), NOW()),
 
--- Tenant Admin Users
-('a0000000-0000-0000-0000-000000000002', 'tenantadmin1@example.com', '$2b$10$rOzJqZqZqZqZqZqZqZqZqOqZqZqZqZqZqZqZqZqZqZqZqZqZq', 'Tenant Admin One', false, NOW(), NOW()),
-('a0000000-0000-0000-0000-000000000003', 'tenantadmin2@example.com', '$2b$10$rOzJqZqZqZqZqZqZqZqZqOqZqZqZqZqZqZqZqZqZqZqZqZqZq', 'Tenant Admin Two', false, NOW(), NOW()),
+-- Tenant Admin Users (Password: Password@123)
+('a0000000-0000-0000-0000-000000000002', 'tenantadmin1@example.com', '$2b$10$MZKl4w0Wt2CoJq14kgzpmeyoa9ZV/VlfeqFqurahxy5dq27OJHQ8a', 'Tenant Admin One', false, NOW(), NOW()),
+('a0000000-0000-0000-0000-000000000003', 'tenantadmin2@example.com', '$2b$10$MZKl4w0Wt2CoJq14kgzpmeyoa9ZV/VlfeqFqurahxy5dq27OJHQ8a', 'Tenant Admin Two', false, NOW(), NOW()),
 
--- Staff Users
-('a0000000-0000-0000-0000-000000000004', 'staff1@example.com', '$2b$10$rOzJqZqZqZqZqZqZqZqZqOqZqZqZqZqZqZqZqZqZqZqZqZqZq', 'Staff Member One', false, NOW(), NOW()),
-('a0000000-0000-0000-0000-000000000005', 'staff2@example.com', '$2b$10$rOzJqZqZqZqZqZqZqZqZqOqZqZqZqZqZqZqZqZqZqZqZqZqZq', 'Staff Member Two', false, NOW(), NOW()),
-('a0000000-0000-0000-0000-000000000006', 'staff3@example.com', '$2b$10$rOzJqZqZqZqZqZqZqZqZqOqZqZqZqZqZqZqZqZqZqZqZqZqZq', 'Staff Member Three', false, NOW(), NOW());
+-- Staff Users (Password: Password@123)
+('a0000000-0000-0000-0000-000000000004', 'staff1@example.com', '$2b$10$MZKl4w0Wt2CoJq14kgzpmeyoa9ZV/VlfeqFqurahxy5dq27OJHQ8a', 'Staff Member One', false, NOW(), NOW()),
+('a0000000-0000-0000-0000-000000000005', 'staff2@example.com', '$2b$10$MZKl4w0Wt2CoJq14kgzpmeyoa9ZV/VlfeqFqurahxy5dq27OJHQ8a', 'Staff Member Two', false, NOW(), NOW()),
+('a0000000-0000-0000-0000-000000000006', 'staff3@example.com', '$2b$10$MZKl4w0Wt2CoJq14kgzpmeyoa9ZV/VlfeqFqurahxy5dq27OJHQ8a', 'Staff Member Three', false, NOW(), NOW());
 
 -- ============================================================================
 -- 2. TENANTS (Event Organizers)
@@ -57,7 +58,7 @@ INSERT INTO tenant_users (id, tenant_id, user_id, role, status, invited_at, crea
 -- 4. STAFF (Staff Entity Records)
 -- ============================================================================
 
-INSERT INTO staff (id, tenant_id, user_id, full_name, position, phone_number, gender, is_active, created_at, updated_at) VALUES
+INSERT INTO staff (id, tenant_id, user_id, "fullName", position, "phoneNumber", gender, is_active, created_at, updated_at) VALUES
 ('d0000000-0000-0000-0000-000000000001', 'b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000004', 'Staff Member One', 'CHECKER', '+8801712345678', 'MALE', true, NOW(), NOW()),
 ('d0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000005', 'Staff Member Two', 'SUPERVISOR', '+8801712345679', 'FEMALE', true, NOW(), NOW()),
 ('d0000000-0000-0000-0000-000000000003', 'b0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000006', 'Staff Member Three', 'CHECKER', '+8801712345680', 'MALE', true, NOW(), NOW());
@@ -147,29 +148,29 @@ INSERT INTO event_sessions (id, event_id, title, description, start_at, end_at, 
 
 INSERT INTO ticket_types (id, event_id, name, description, price_taka, currency, quantity_total, quantity_sold, sales_start, sales_end, status, created_at, updated_at) VALUES
 -- Ticket Types for Event 1
-('g0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
+('10000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
  'VIP Ticket', 'VIP access with premium seating and backstage access', 5000, 'BDT', 100, 15,
  '2024-06-01 00:00:00+06:00', '2024-07-14 23:59:59+06:00', 'active', NOW(), NOW()),
-('g0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001',
+('10000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001',
  'General Admission', 'Standard entry ticket', 2000, 'BDT', 500, 120,
  '2024-06-01 00:00:00+06:00', '2024-07-14 23:59:59+06:00', 'active', NOW(), NOW()),
-('g0000000-0000-0000-0000-000000000003', 'e0000000-0000-0000-0000-000000000001',
+('10000000-0000-0000-0000-000000000003', 'e0000000-0000-0000-0000-000000000001',
  'Early Bird', 'Early bird discount ticket', 1500, 'BDT', 200, 200,
  '2024-05-01 00:00:00+06:00', '2024-05-31 23:59:59+06:00', 'sold_out', NOW(), NOW()),
 
 -- Ticket Types for Event 2
-('g0000000-0000-0000-0000-000000000004', 'e0000000-0000-0000-0000-000000000002',
+('10000000-0000-0000-0000-000000000004', 'e0000000-0000-0000-0000-000000000002',
  'Full Day Pass', 'Access to all sessions and workshops', 3000, 'BDT', 300, 45,
  '2024-07-01 00:00:00+06:00', '2024-08-19 23:59:59+06:00', 'active', NOW(), NOW()),
-('g0000000-0000-0000-0000-000000000005', 'e0000000-0000-0000-0000-000000000002',
+('10000000-0000-0000-0000-000000000005', 'e0000000-0000-0000-0000-000000000002',
  'Half Day Pass', 'Access to morning or afternoon sessions', 1500, 'BDT', 200, 30,
  '2024-07-01 00:00:00+06:00', '2024-08-19 23:59:59+06:00', 'active', NOW(), NOW()),
 
 -- Ticket Types for Event 3
-('g0000000-0000-0000-0000-000000000006', 'e0000000-0000-0000-0000-000000000003',
+('10000000-0000-0000-0000-000000000006', 'e0000000-0000-0000-0000-000000000003',
  'Food Lover Pass', 'Unlimited food tasting from all vendors', 1000, 'BDT', 500, 80,
  '2024-08-01 00:00:00+06:00', '2024-09-09 23:59:59+06:00', 'active', NOW(), NOW()),
-('g0000000-0000-0000-0000-000000000007', 'e0000000-0000-0000-0000-000000000003',
+('10000000-0000-0000-0000-000000000007', 'e0000000-0000-0000-0000-000000000003',
  'Standard Entry', 'Entry ticket with food vouchers', 500, 'BDT', 1000, 200,
  '2024-08-01 00:00:00+06:00', '2024-09-09 23:59:59+06:00', 'active', NOW(), NOW());
 
@@ -179,20 +180,20 @@ INSERT INTO ticket_types (id, event_id, name, description, price_taka, currency,
 
 INSERT INTO discount_codes (id, event_id, code, description, max_redemptions, times_redeemed, discount_type, discount_value, starts_at, expires_at, status, created_at, updated_at) VALUES
 -- Discount Codes for Event 1
-('h0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
+('20000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
  'SUMMER2024', 'Summer festival discount - 20% off', 50, 12, 'percentage', 20,
  '2024-06-01 00:00:00+06:00', '2024-07-14 23:59:59+06:00', 'active', NOW(), NOW()),
-('h0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001',
+('20000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001',
  'EARLY50', 'Early bird flat discount - 500 Taka off', 100, 25, 'fixed_amount', 500,
  '2024-05-15 00:00:00+06:00', '2024-06-30 23:59:59+06:00', 'active', NOW(), NOW()),
 
 -- Discount Codes for Event 2
-('h0000000-0000-0000-0000-000000000003', 'e0000000-0000-0000-0000-000000000002',
+('20000000-0000-0000-0000-000000000003', 'e0000000-0000-0000-0000-000000000002',
  'TECH2024', 'Tech conference discount - 15% off', 30, 8, 'percentage', 15,
  '2024-07-15 00:00:00+06:00', '2024-08-19 23:59:59+06:00', 'active', NOW(), NOW()),
 
 -- Discount Codes for Event 3
-('h0000000-0000-0000-0000-000000000004', 'e0000000-0000-0000-0000-000000000003',
+('20000000-0000-0000-0000-000000000004', 'e0000000-0000-0000-0000-000000000003',
  'FOODIE', 'Food festival discount - 100 Taka off', 200, 45, 'fixed_amount', 100,
  '2024-08-15 00:00:00+06:00', '2024-09-09 23:59:59+06:00', 'active', NOW(), NOW());
 
@@ -202,19 +203,19 @@ INSERT INTO discount_codes (id, event_id, code, description, max_redemptions, ti
 
 INSERT INTO orders (id, tenant_id, event_id, buyer_email, buyer_name, total_taka, currency, status, payment_intent_id, public_lookup_token, created_at, updated_at) VALUES
 -- Orders for Event 1
-('i0000000-0000-0000-0000-000000000001', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
+('30000000-0000-0000-0000-000000000001', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
  'buyer1@example.com', 'John Buyer', 10000, 'BDT', 'completed', 'pi_stripe_123456', 'lookup_token_001', NOW(), NOW()),
-('i0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
+('30000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
  'buyer2@example.com', 'Sarah Buyer', 4000, 'BDT', 'completed', 'pi_bkash_789012', 'lookup_token_002', NOW(), NOW()),
-('i0000000-0000-0000-0000-000000000003', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
+('30000000-0000-0000-0000-000000000003', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001',
  'buyer3@example.com', 'Ahmed Buyer', 5000, 'BDT', 'pending', NULL, 'lookup_token_003', NOW(), NOW()),
 
 -- Orders for Event 2
-('i0000000-0000-0000-0000-000000000004', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000002',
+('30000000-0000-0000-0000-000000000004', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000002',
  'buyer4@example.com', 'Fatima Buyer', 3000, 'BDT', 'completed', 'pi_nagad_345678', 'lookup_token_004', NOW(), NOW()),
 
 -- Orders for Event 3
-('i0000000-0000-0000-0000-000000000005', 'b0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000003',
+('30000000-0000-0000-0000-000000000005', 'b0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000003',
  'buyer5@example.com', 'Rahman Buyer', 2000, 'BDT', 'completed', 'pi_rocket_901234', 'lookup_token_005', NOW(), NOW());
 
 -- ============================================================================
@@ -223,19 +224,19 @@ INSERT INTO orders (id, tenant_id, event_id, buyer_email, buyer_name, total_taka
 
 INSERT INTO order_items (id, order_id, ticket_type_id, unit_price_taka, quantity, subtotal_taka, created_at, updated_at) VALUES
 -- Order Items for Order 1 (2 VIP tickets)
-('j0000000-0000-0000-0000-000000000001', 'i0000000-0000-0000-0000-000000000001', 'g0000000-0000-0000-0000-000000000001', 5000, 2, 10000, NOW(), NOW()),
+('40000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 5000, 2, 10000, NOW(), NOW()),
 
 -- Order Items for Order 2 (2 General Admission tickets)
-('j0000000-0000-0000-0000-000000000002', 'i0000000-0000-0000-0000-000000000002', 'g0000000-0000-0000-0000-000000000002', 2000, 2, 4000, NOW(), NOW()),
+('40000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000002', 2000, 2, 4000, NOW(), NOW()),
 
 -- Order Items for Order 3 (1 VIP ticket)
-('j0000000-0000-0000-0000-000000000003', 'i0000000-0000-0000-0000-000000000003', 'g0000000-0000-0000-0000-000000000001', 5000, 1, 5000, NOW(), NOW()),
+('40000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001', 5000, 1, 5000, NOW(), NOW()),
 
 -- Order Items for Order 4 (1 Full Day Pass)
-('j0000000-0000-0000-0000-000000000004', 'i0000000-0000-0000-0000-000000000004', 'g0000000-0000-0000-0000-000000000004', 3000, 1, 3000, NOW(), NOW()),
+('40000000-0000-0000-0000-000000000004', '30000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000004', 3000, 1, 3000, NOW(), NOW()),
 
 -- Order Items for Order 5 (2 Food Lover Passes)
-('j0000000-0000-0000-0000-000000000005', 'i0000000-0000-0000-0000-000000000005', 'g0000000-0000-0000-0000-000000000006', 1000, 2, 2000, NOW(), NOW());
+('40000000-0000-0000-0000-000000000005', '30000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000006', 1000, 2, 2000, NOW(), NOW());
 
 -- ============================================================================
 -- 11. TICKETS (with QR codes)
@@ -243,45 +244,45 @@ INSERT INTO order_items (id, order_id, ticket_type_id, unit_price_taka, quantity
 
 INSERT INTO tickets (id, order_id, ticket_type_id, attendee_name, attendee_email, qr_code_payload, qr_signature, status, checked_in_at, seat_label, created_at, updated_at) VALUES
 -- Tickets for Order 1 (2 VIP tickets)
-('k0000000-0000-0000-0000-000000000001', 'i0000000-0000-0000-0000-000000000001', 'g0000000-0000-0000-0000-000000000001',
+('50000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001',
  'John Buyer', 'buyer1@example.com',
- '{"ticketId":"k0000000-0000-0000-0000-000000000001","orderId":"i0000000-0000-0000-0000-000000000001","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"John Buyer","timestamp":1720000000000}',
+ '{"ticketId":"50000000-0000-0000-0000-000000000001","orderId":"30000000-0000-0000-0000-000000000001","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"John Buyer","timestamp":1720000000000}',
  'qr_signature_hash_001', 'valid', NULL, 'VIP-A-01', NOW(), NOW()),
-('k0000000-0000-0000-0000-000000000002', 'i0000000-0000-0000-0000-000000000001', 'g0000000-0000-0000-0000-000000000001',
+('50000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001',
  'John Buyer', 'buyer1@example.com',
- '{"ticketId":"k0000000-0000-0000-0000-000000000002","orderId":"i0000000-0000-0000-0000-000000000001","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"John Buyer","timestamp":1720000000001}',
+ '{"ticketId":"50000000-0000-0000-0000-000000000002","orderId":"30000000-0000-0000-0000-000000000001","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"John Buyer","timestamp":1720000000001}',
  'qr_signature_hash_002', 'valid', NULL, 'VIP-A-02', NOW(), NOW()),
 
 -- Tickets for Order 2 (2 General Admission tickets)
-('k0000000-0000-0000-0000-000000000003', 'i0000000-0000-0000-0000-000000000002', 'g0000000-0000-0000-0000-000000000002',
+('50000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000002',
  'Sarah Buyer', 'buyer2@example.com',
- '{"ticketId":"k0000000-0000-0000-0000-000000000003","orderId":"i0000000-0000-0000-0000-000000000002","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"Sarah Buyer","timestamp":1720000000002}',
+ '{"ticketId":"50000000-0000-0000-0000-000000000003","orderId":"30000000-0000-0000-0000-000000000002","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"Sarah Buyer","timestamp":1720000000002}',
  'qr_signature_hash_003', 'scanned', '2024-07-15 18:30:00+06:00', 'GA-101', NOW(), NOW()),
-('k0000000-0000-0000-0000-000000000004', 'i0000000-0000-0000-0000-000000000002', 'g0000000-0000-0000-0000-000000000002',
+('50000000-0000-0000-0000-000000000004', '30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000002',
  'Sarah Buyer', 'buyer2@example.com',
- '{"ticketId":"k0000000-0000-0000-0000-000000000004","orderId":"i0000000-0000-0000-0000-000000000002","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"Sarah Buyer","timestamp":1720000000003}',
+ '{"ticketId":"50000000-0000-0000-0000-000000000004","orderId":"30000000-0000-0000-0000-000000000002","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"Sarah Buyer","timestamp":1720000000003}',
  'qr_signature_hash_004', 'valid', NULL, 'GA-102', NOW(), NOW()),
 
 -- Tickets for Order 3 (1 VIP ticket - pending payment)
-('k0000000-0000-0000-0000-000000000005', 'i0000000-0000-0000-0000-000000000003', 'g0000000-0000-0000-0000-000000000001',
+('50000000-0000-0000-0000-000000000005', '30000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001',
  'Ahmed Buyer', 'buyer3@example.com',
- '{"ticketId":"k0000000-0000-0000-0000-000000000005","orderId":"i0000000-0000-0000-0000-000000000003","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"Ahmed Buyer","timestamp":1720000000004}',
+ '{"ticketId":"50000000-0000-0000-0000-000000000005","orderId":"30000000-0000-0000-0000-000000000003","eventId":"e0000000-0000-0000-0000-000000000001","attendeeName":"Ahmed Buyer","timestamp":1720000000004}',
  'qr_signature_hash_005', 'valid', NULL, 'VIP-B-01', NOW(), NOW()),
 
 -- Tickets for Order 4 (1 Full Day Pass)
-('k0000000-0000-0000-0000-000000000006', 'i0000000-0000-0000-0000-000000000004', 'g0000000-0000-0000-0000-000000000004',
+('50000000-0000-0000-0000-000000000006', '30000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000004',
  'Fatima Buyer', 'buyer4@example.com',
- '{"ticketId":"k0000000-0000-0000-0000-000000000006","orderId":"i0000000-0000-0000-0000-000000000004","eventId":"e0000000-0000-0000-0000-000000000002","attendeeName":"Fatima Buyer","timestamp":1720000000005}',
+ '{"ticketId":"50000000-0000-0000-0000-000000000006","orderId":"30000000-0000-0000-0000-000000000004","eventId":"e0000000-0000-0000-0000-000000000002","attendeeName":"Fatima Buyer","timestamp":1720000000005}',
  'qr_signature_hash_006', 'valid', NULL, NULL, NOW(), NOW()),
 
 -- Tickets for Order 5 (2 Food Lover Passes)
-('k0000000-0000-0000-0000-000000000007', 'i0000000-0000-0000-0000-000000000005', 'g0000000-0000-0000-0000-000000000006',
+('50000000-0000-0000-0000-000000000007', '30000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000006',
  'Rahman Buyer', 'buyer5@example.com',
- '{"ticketId":"k0000000-0000-0000-0000-000000000007","orderId":"i0000000-0000-0000-0000-000000000005","eventId":"e0000000-0000-0000-0000-000000000003","attendeeName":"Rahman Buyer","timestamp":1720000000006}',
+ '{"ticketId":"50000000-0000-0000-0000-000000000007","orderId":"30000000-0000-0000-0000-000000000005","eventId":"e0000000-0000-0000-0000-000000000003","attendeeName":"Rahman Buyer","timestamp":1720000000006}',
  'qr_signature_hash_007', 'valid', NULL, NULL, NOW(), NOW()),
-('k0000000-0000-0000-0000-000000000008', 'i0000000-0000-0000-0000-000000000005', 'g0000000-0000-0000-0000-000000000006',
+('50000000-0000-0000-0000-000000000008', '30000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000006',
  'Rahman Buyer', 'buyer5@example.com',
- '{"ticketId":"k0000000-0000-0000-0000-000000000008","orderId":"i0000000-0000-0000-0000-000000000005","eventId":"e0000000-0000-0000-0000-000000000003","attendeeName":"Rahman Buyer","timestamp":1720000000007}',
+ '{"ticketId":"50000000-0000-0000-0000-000000000008","orderId":"30000000-0000-0000-0000-000000000005","eventId":"e0000000-0000-0000-0000-000000000003","attendeeName":"Rahman Buyer","timestamp":1720000000007}',
  'qr_signature_hash_008', 'valid', NULL, NULL, NOW(), NOW());
 
 -- ============================================================================
@@ -290,13 +291,13 @@ INSERT INTO tickets (id, order_id, ticket_type_id, attendee_name, attendee_email
 
 INSERT INTO payments (id, order_id, provider, provider_reference, status, amount_cents, currency, processed_at, payload, created_at) VALUES
 -- Payments for completed orders
-('l0000000-0000-0000-0000-000000000001', 'i0000000-0000-0000-0000-000000000001', 'stripe', 'ch_stripe_123456', 'completed', 1000000, 'BDT', NOW(),
+('60000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'stripe', 'ch_stripe_123456', 'completed', 1000000, 'BDT', NOW(),
  '{"payment_intent_id": "pi_stripe_123456", "transaction_id": "ch_stripe_123456", "amount": 10000, "currency": "BDT"}', NOW()),
-('l0000000-0000-0000-0000-000000000002', 'i0000000-0000-0000-0000-000000000002', 'bkash', 'TRX_bkash_789012', 'completed', 400000, 'BDT', NOW(),
+('60000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000002', 'bkash', 'TRX_bkash_789012', 'completed', 400000, 'BDT', NOW(),
  '{"transaction_id": "TRX_bkash_789012", "amount": 4000, "currency": "BDT", "mobile_number": "+8801712345678"}', NOW()),
-('l0000000-0000-0000-0000-000000000003', 'i0000000-0000-0000-0000-000000000004', 'nagad', 'TRX_nagad_345678', 'completed', 300000, 'BDT', NOW(),
+('60000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000004', 'nagad', 'TRX_nagad_345678', 'completed', 300000, 'BDT', NOW(),
  '{"transaction_id": "TRX_nagad_345678", "amount": 3000, "currency": "BDT", "mobile_number": "+8801712345679"}', NOW()),
-('l0000000-0000-0000-0000-000000000004', 'i0000000-0000-0000-0000-000000000005', 'rocket', 'TRX_rocket_901234', 'completed', 200000, 'BDT', NOW(),
+('60000000-0000-0000-0000-000000000004', '30000000-0000-0000-0000-000000000005', 'rocket', 'TRX_rocket_901234', 'completed', 200000, 'BDT', NOW(),
  '{"transaction_id": "TRX_rocket_901234", "amount": 2000, "currency": "BDT", "account_number": "1234567890"}', NOW());
 
 -- ============================================================================
@@ -305,17 +306,17 @@ INSERT INTO payments (id, order_id, provider, provider_reference, status, amount
 
 INSERT INTO activity_logs (id, tenant_id, actor_id, action, metadata, created_at) VALUES
 -- Activity logs for Tenant 1
-('m0000000-0000-0000-0000-000000000001', 'b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002',
+('70000000-0000-0000-0000-000000000001', 'b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002',
  'event.created', '{"eventId": "e0000000-0000-0000-0000-000000000001", "eventName": "Summer Music Festival 2024"}', NOW()),
-('m0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000004',
- 'ticket.checked_in', '{"ticketId": "k0000000-0000-0000-0000-000000000003", "eventId": "e0000000-0000-0000-0000-000000000001", "description": "Checked in ticket for Sarah Buyer"}', NOW()),
-('m0000000-0000-0000-0000-000000000003', 'b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002',
+('70000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000004',
+ 'ticket.checked_in', '{"ticketId": "50000000-0000-0000-0000-000000000003", "eventId": "e0000000-0000-0000-0000-000000000001", "description": "Checked in ticket for Sarah Buyer"}', NOW()),
+('70000000-0000-0000-0000-000000000003', 'b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002',
  'order.completed', '{"orderId": "i0000000-0000-0000-0000-000000000001", "totalAmount": 10000, "buyerEmail": "buyer1@example.com"}', NOW()),
 
 -- Activity logs for Tenant 2
-('m0000000-0000-0000-0000-000000000004', 'b0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000003',
+('70000000-0000-0000-0000-000000000004', 'b0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000003',
  'event.created', '{"eventId": "e0000000-0000-0000-0000-000000000003", "eventName": "Chittagong Food Festival"}', NOW()),
-('m0000000-0000-0000-0000-000000000005', 'b0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000003',
+('70000000-0000-0000-0000-000000000005', 'b0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000003',
  'order.completed', '{"orderId": "i0000000-0000-0000-0000-000000000005", "totalAmount": 2000, "buyerEmail": "buyer5@example.com"}', NOW());
 
 -- ============================================================================
@@ -323,13 +324,13 @@ INSERT INTO activity_logs (id, tenant_id, actor_id, action, metadata, created_at
 -- ============================================================================
 
 INSERT INTO webhook_events (id, provider, event_type, payload, received_at, processed_at, status, error_message, created_at) VALUES
-('n0000000-0000-0000-0000-000000000001', 'stripe', 'payment.succeeded',
+('80000000-0000-0000-0000-000000000001', 'stripe', 'payment.succeeded',
  '{"id": "evt_stripe_123", "type": "payment_intent.succeeded", "data": {"object": {"id": "pi_stripe_123456", "amount": 1000000}}}',
  NOW(), NOW(), 'processed', NULL, NOW()),
-('n0000000-0000-0000-0000-000000000002', 'bkash', 'payment.completed',
+('80000000-0000-0000-0000-000000000002', 'bkash', 'payment.completed',
  '{"transaction_id": "TRX_bkash_789012", "amount": 4000, "status": "success"}',
  NOW(), NOW(), 'processed', NULL, NOW()),
-('n0000000-0000-0000-0000-000000000003', 'nagad', 'payment.completed',
+('80000000-0000-0000-0000-000000000003', 'nagad', 'payment.completed',
  '{"transaction_id": "TRX_nagad_345678", "amount": 3000, "status": "success"}',
  NOW(), NULL, 'pending', NULL, NOW());
 
@@ -352,7 +353,8 @@ INSERT INTO webhook_events (id, provider, event_type, payload, received_at, proc
 -- - 5 Activity Logs
 -- - 3 Webhook Events
 --
--- All users have password: Password@123
--- Note: The bcrypt hash used is a placeholder. In production, generate proper hashes.
+-- Passwords:
+-- - admin@platform.com: Admin@123
+-- - All other users: Password@123
 -- ============================================================================
 
