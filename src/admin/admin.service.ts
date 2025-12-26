@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, FindOptionsWhere } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -62,6 +62,22 @@ export class AdminService {
       isPlatformAdmin: createUserDto.isPlatformAdmin ?? false,
     });
     return this.userRepository.save(user);
+  }
+
+  async registerAdmin(createAdminDto: any): Promise<UserEntity> {
+      // Check if email already exists
+      const existingUser = await this.findUserByEmail(createAdminDto.email);
+      if (existingUser) {
+          throw new UnauthorizedException('Email already in use');
+      }
+
+      // Create Admin User
+      return this.createUser({
+          email: createAdminDto.email,
+          password: createAdminDto.password,
+          fullName: createAdminDto.fullName,
+          isPlatformAdmin: true,
+      });
   }
 
   async getAllUsers(query: UserQueryDto) {
@@ -633,5 +649,27 @@ export class AdminService {
     if (result.affected === 0) {
       throw new NotFoundException(`Activity log with id ${id} not found`);
     }
+  }
+  async getStats() {
+    const totalTenants = await this.tenantRepository.count({
+      where: { status: 'active' },
+    });
+    const totalUsers = await this.userRepository.count();
+    
+    // Calculate total revenue from processed payments
+    const { sum } = await this.paymentRepository
+      .createQueryBuilder('payment')
+      .select('SUM(payment.amountCents)', 'sum')
+      .where('payment.status = :status', { status: 'succeeded' })
+      .getRawOne();
+
+    const totalRevenue = sum ? parseInt(sum) / 100 : 0; // Convert cents to main currency unit
+
+    return {
+      activeTenants: totalTenants,
+      totalUsers: totalUsers,
+      totalRevenue: totalRevenue,
+      systemHealth: '99.9%', // Mocked for now, or implement real health check logic
+    };
   }
 }

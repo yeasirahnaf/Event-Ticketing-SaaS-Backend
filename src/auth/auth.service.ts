@@ -39,6 +39,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // Restriction: Only allow Platform Admins to login via this endpoint
+    if (!user.isPlatformAdmin) {
+      throw new UnauthorizedException('Access denied. Admin privileges required.');
+    }
+
     // Determine user role and tenant information
     let role: UserRole = null;
     let tenantId: string | undefined;

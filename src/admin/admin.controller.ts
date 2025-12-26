@@ -39,13 +39,28 @@ import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
+import { Public } from '../auth/public.decorator';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard) // Apply guards to all admin routes
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  // Public endpoint for Admin Registration
+  @Public()
+  @Post('register')
+  @UsePipes(new ValidationPipe())
+  async registerAdmin(@Body() createAdminDto: any) { // Type should be CreateAdminDto but importing to avoid circular dep issues quickly
+     return this.adminService.registerAdmin(createAdminDto);
+  }
+
   // User endpoints (Platform Users) - Platform Admin only
+  @Get('stats')
+  @Roles('platform_admin')
+  getStats() {
+    return this.adminService.getStats();
+  }
+
   @Post('users')
   @Roles('platform_admin')
   @UsePipes(new ValidationPipe())
