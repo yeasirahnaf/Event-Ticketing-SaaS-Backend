@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { EventEntity } from '../events/event.entity';
 
-@Entity('tickets')
+@Entity('tickets_v2')
 export class TicketEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
