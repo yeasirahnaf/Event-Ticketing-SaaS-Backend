@@ -16,6 +16,7 @@ import {
 
 export enum EventStatus {
   DRAFT = 'draft',
+  PUBLISHED = 'published',
   SCHEDULED = 'scheduled',
   ACTIVE = 'active',
   CANCELLED = 'cancelled',
