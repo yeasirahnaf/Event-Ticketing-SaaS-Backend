@@ -82,4 +82,8 @@ export class UpdateEventDto {
     logo?: string;
     customCss?: string;
   };
+
+  @IsObject()
+  @IsOptional()
+  themeContent?: any;
 }

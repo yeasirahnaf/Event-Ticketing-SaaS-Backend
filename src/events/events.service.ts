@@ -56,7 +56,7 @@ export class EventsService {
   async getEventById(id: string) {
     const event = await this.eventRepository.findOne({
       where: { id },
-      relations: ['theme', 'tenant'],
+      relations: ['theme', 'tenant', 'ticketTypes', 'sessions'],
     });
     if (!event) {
       throw new NotFoundException(`Event with ID ${id} not found`);
@@ -69,6 +69,8 @@ export class EventsService {
       .createQueryBuilder('event')
       .leftJoinAndSelect('event.tenant', 'tenant')
       .leftJoinAndSelect('event.theme', 'theme')
+      .leftJoinAndSelect('event.ticketTypes', 'ticketTypes')
+      .leftJoinAndSelect('event.sessions', 'sessions')
       .where('tenant.slug = :tenantSlug', { tenantSlug })
       .andWhere('event.slug = :eventSlug', { eventSlug })
       .andWhere('event.isPublished = :isPublished', { isPublished: true })
@@ -83,7 +85,7 @@ export class EventsService {
   async getEventByGlobalSlug(slug: string) {
     const event = await this.eventRepository.findOne({
       where: { slug },
-      relations: ['theme', 'tenant'],
+      relations: ['theme', 'tenant', 'ticketTypes', 'sessions'],
     });
 
     if (!event) {
@@ -115,6 +117,7 @@ export class EventsService {
     if (updateEventDto.schedule) updateData.schedule = updateEventDto.schedule;
     if (updateEventDto.faq) updateData.faq = updateEventDto.faq;
     if (updateEventDto.themeCustomization) updateData.themeCustomization = updateEventDto.themeCustomization;
+    if (updateEventDto.themeContent) updateData.themeContent = updateEventDto.themeContent;
 
     if (updateEventDto.startAt) {
       updateData.startAt = new Date(updateEventDto.startAt);
