@@ -20,6 +20,7 @@ import { StaffGuard } from './staff.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { StaffService } from './staff.service';
 import { CreateStaffDto, UpdateStaffDto, CheckinDto } from './staff.dto';
+import { EventEntity } from '../events/event.entity';
 
 @Controller('staff')
 @UseGuards(JwtAuthGuard)

@@ -3,25 +3,28 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AttendeeController } from './attendee.controller';
 import { AttendeeService } from './attendee.service';
 import {
-  Event,
-  EventSession,
-  TicketType,
-  DiscountCode,
-  Order,
-  OrderItem,
   Ticket,
+  Order,
+  TicketType,
+  EventSession,
+  OrderItem,
+  DiscountCode,
 } from '../tenant-admin/tenant-entity';
+import { EventEntity } from '../events/event.entity';
+import { UserEntity } from '../admin/user.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Event,
-      EventSession,
-      TicketType,
-      DiscountCode,
-      Order,
-      OrderItem,
+      EventEntity,
       Ticket,
+      Order,
+      TicketType,
+      EventSession,
+      UserEntity,
+      OrderItem,
+      DiscountCode,
     ]),
   ],
   controllers: [AttendeeController],

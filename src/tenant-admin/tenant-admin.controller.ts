@@ -37,6 +37,7 @@ import { TenantEntity } from '../admin/tenant.entity';
 export class TenantAdminController {
   constructor(private readonly tenantAdminService: TenantAdminService) {}
 
+/*
   @Post('events')
   async createEvent(
     @CurrentUser() user: JwtPayload,
@@ -85,6 +86,7 @@ export class TenantAdminController {
   ) {
     return await this.tenantAdminService.deleteEvent(user.tenantId!, eventId);
   }
+*/
 
   @Post('event-sessions')
   async createEventSession(

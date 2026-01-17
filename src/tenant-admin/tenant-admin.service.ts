@@ -3,12 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import * as bcrypt from 'bcrypt';
+import { EventEntity } from '../events/event.entity';
 import {
-  Event,
   EventSession,
   TicketType,
   DiscountCode,
   Order,
+  OrderItem,
   Ticket,
 } from './tenant-entity';
 import {
@@ -35,7 +36,7 @@ import { TenantEntity } from '../admin/tenant.entity';
 @Injectable()
 export class TenantAdminService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>,
+    @InjectRepository(EventEntity) private eventRepository: Repository<EventEntity>,
     @InjectRepository(EventSession)
     private eventSessionRepository: Repository<EventSession>,
     @InjectRepository(TicketType)
@@ -53,19 +54,26 @@ export class TenantAdminService {
     private readonly mailerService: MailerService,
   ) {}
 
-  async createEvent(createEventsDto: any): Promise<Event> {
+  async createEvent(createEventsDto: any): Promise<EventEntity> {
     try {
-      // Event entity uses tenant_id (snake_case), DTO may have tenantId (camelCase)
-      // Controller should pass tenant_id, but handle both for safety
+      // Map DTO (snake_case) to Entity (camelCase)
       const eventData = {
-        ...createEventsDto,
-        tenant_id: createEventsDto.tenant_id || createEventsDto.tenantId,
+        name: createEventsDto.name,
+        slug: createEventsDto.slug,
+        description: createEventsDto.description,
+        venue: createEventsDto.venue,
+        city: createEventsDto.city,
+        country: createEventsDto.country,
+        startAt: createEventsDto.start_at,
+        endAt: createEventsDto.end_at,
+        tenantId: createEventsDto.tenant_id || createEventsDto.tenantId,
+        status: createEventsDto.status || 'draft',
+        isPublished: false, // Default
+        // Note: imageUrl is not in DTO
       };
-      // Remove tenantId if it exists to avoid confusion
-      delete eventData.tenantId;
+
       const event = this.eventRepository.create(eventData);
       const savedEvent = await this.eventRepository.save(event);
-      // TypeORM save() can return Event or Event[], but we're saving a single entity
       return Array.isArray(savedEvent) ? savedEvent[0] : savedEvent;
     } catch (error: any) {
       if (error?.code === '23505') {
@@ -75,16 +83,16 @@ export class TenantAdminService {
     }
   }
 
-  async getAllEvents(tenantId: string): Promise<Event[]> {
+  async getAllEvents(tenantId: string): Promise<EventEntity[]> {
     return await this.eventRepository.find({
-      where: { tenant_id: tenantId },
+      where: { tenantId: tenantId },
       relations: ['sessions', 'ticketTypes', 'discountCodes', 'orders'],
     });
   }
 
-  async getEventById(tenantId: string, eventId: string): Promise<Event> {
+  async getEventById(tenantId: string, eventId: string): Promise<EventEntity> {
     const event = await this.eventRepository.findOne({
-      where: { id: eventId, tenant_id: tenantId },
+      where: { id: eventId, tenantId: tenantId },
       relations: ['sessions', 'ticketTypes', 'discountCodes', 'orders'],
     });
     if (!event) {
@@ -97,18 +105,22 @@ export class TenantAdminService {
     tenantId: string,
     eventId: string,
     updateEventsDto: Partial<createEventsDto>,
-  ): Promise<Event> {
+  ): Promise<EventEntity> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, eventId);
     
-    // Map tenantId (camelCase) to tenant_id (snake_case) if present
-    const updateData: any = { ...updateEventsDto };
-    if (updateData.tenantId) {
-      updateData.tenant_id = updateData.tenantId;
-      delete updateData.tenantId;
-    }
-    // Ensure tenant_id cannot be changed
-    delete updateData.tenant_id;
+    // Map updates
+    const updateData: any = {};
+    if (updateEventsDto.name) updateData.name = updateEventsDto.name;
+    if (updateEventsDto.slug) updateData.slug = updateEventsDto.slug;
+    if (updateEventsDto.description) updateData.description = updateEventsDto.description;
+    if (updateEventsDto.venue) updateData.venue = updateEventsDto.venue;
+    if (updateEventsDto.city) updateData.city = updateEventsDto.city;
+    if (updateEventsDto.country) updateData.country = updateEventsDto.country;
+    if (updateEventsDto.start_at) updateData.startAt = updateEventsDto.start_at;
+    if (updateEventsDto.end_at) updateData.endAt = updateEventsDto.end_at;
+    if (updateEventsDto.status) updateData.status = updateEventsDto.status;
+    
     await this.eventRepository.update(eventId, updateData);
     return await this.getEventById(tenantId, eventId);
   }
@@ -135,7 +147,13 @@ export class TenantAdminService {
     await this.getEventById(tenantId, eventSessionDto.event_id);
     
     try {
-      const session = this.eventSessionRepository.create(eventSessionDto);
+      // Map event_id manually since renaming/mapping happened
+      const sessionData = {
+          ...eventSessionDto,
+          event: { id: eventSessionDto.event_id } as any 
+      };
+      
+      const session = this.eventSessionRepository.create(sessionData);
       return await this.eventSessionRepository.save(session);
     } catch (error: any) {
       if (error?.code === '23505') {
@@ -150,7 +168,7 @@ export class TenantAdminService {
     await this.getEventById(tenantId, eventId);
     
     return await this.eventSessionRepository.find({
-      where: { event_id: eventId },
+      where: { event: { id: eventId } },
       relations: ['event'],
     });
   }
@@ -166,7 +184,7 @@ export class TenantAdminService {
       );
     }
     // Verify event belongs to tenant
-    if (session.event.tenant_id !== tenantId) {
+    if (session.event.tenantId !== tenantId) {
       throw new NotFoundException(
         `Event session with ID ${sessionId} not found`,
       );
@@ -213,7 +231,13 @@ export class TenantAdminService {
     await this.getEventById(tenantId, createTicketDto.event_id);
     
     try {
-      const ticketType = this.ticketTypeRepository.create(createTicketDto);
+       // Manual link to event by ID
+       const ticketTypeData = {
+           ...createTicketDto,
+           event: { id: createTicketDto.event_id } as any
+       };
+       
+      const ticketType = this.ticketTypeRepository.create(ticketTypeData);
       return await this.ticketTypeRepository.save(ticketType);
     } catch (error: any) {
       if (error?.code === '23505') {
@@ -228,7 +252,7 @@ export class TenantAdminService {
     await this.getEventById(tenantId, eventId);
     
     return await this.ticketTypeRepository.find({
-      where: { event_id: eventId },
+      where: { event: { id: eventId } },
       relations: ['event', 'tickets'],
     });
   }
@@ -244,7 +268,7 @@ export class TenantAdminService {
       );
     }
     // Verify event belongs to tenant
-    if (ticketType.event.tenant_id !== tenantId) {
+    if (ticketType.event.tenantId !== tenantId) {
       throw new NotFoundException(
         `Ticket type with ID ${ticketTypeId} not found`,
       );
@@ -291,7 +315,12 @@ export class TenantAdminService {
     await this.getEventById(tenantId, discountCodeDto.event_id);
     
     try {
-      const discountCode = this.discountCodeRepository.create(discountCodeDto);
+      const discountData = {
+          ...discountCodeDto,
+          event: { id: discountCodeDto.event_id } as any
+      };
+      
+      const discountCode = this.discountCodeRepository.create(discountData);
       return await this.discountCodeRepository.save(discountCode);
     } catch (error: any) {
       if (error?.code === '23505') {
@@ -306,7 +335,7 @@ export class TenantAdminService {
     await this.getEventById(tenantId, eventId);
     
     return await this.discountCodeRepository.find({
-      where: { event_id: eventId },
+      where: { event: { id: eventId } },
       relations: ['event'],
     });
   }
@@ -322,7 +351,7 @@ export class TenantAdminService {
       );
     }
     // Verify event belongs to tenant
-    if (discountCode.event.tenant_id !== tenantId) {
+    if (discountCode.event.tenantId !== tenantId) {
       throw new NotFoundException(
         `Discount code with ID ${discountCodeId} not found`,
       );
@@ -339,7 +368,7 @@ export class TenantAdminService {
       throw new NotFoundException(`Discount code ${code} not found`);
     }
     // Verify event belongs to tenant
-    if (discountCode.event.tenant_id !== tenantId) {
+    if (discountCode.event.tenantId !== tenantId) {
       throw new NotFoundException(`Discount code ${code} not found`);
     }
     return discountCode;
@@ -381,7 +410,12 @@ export class TenantAdminService {
     await this.getEventById(tenantId, ordersDto.event_id);
     
     try {
-      const orderData = { ...ordersDto, tenant_id: tenantId };
+      const orderData = { 
+          ...ordersDto, 
+          tenant_id: tenantId,
+          event: { id: ordersDto.event_id } as any
+      };
+      
       const order = this.orderRepository.create(orderData);
       return await this.orderRepository.save(order);
     } catch (error: any) {
@@ -554,10 +588,12 @@ export class TenantAdminService {
     await this.getEventById(tenantId, eventId);
     
     const ticketTypes = await this.ticketTypeRepository.find({
-      where: { event_id: eventId },
+      where: { event: { id: eventId } },
+      relations: ['event'],
     });
     const orders = await this.orderRepository.find({
-      where: { event_id: eventId, tenant_id: tenantId },
+      where: { event: { id: eventId }, tenant_id: tenantId },
+      relations: ['event'],
     });
 
     const totalTicketsAvailable = ticketTypes.reduce(

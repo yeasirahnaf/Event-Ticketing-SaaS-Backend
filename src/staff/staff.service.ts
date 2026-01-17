@@ -17,11 +17,11 @@ import { ActivityLogEntity } from '../admin/activity-log.entity';
 import { CreateStaffDto, UpdateStaffDto, CheckinDto } from './staff.dto';
 
 import {
-  Event,
   TicketType,
   Order,
   Ticket,
 } from '../tenant-admin/tenant-entity';
+import { EventEntity } from '../events/event.entity';
 import { UserEntity } from '../admin/user.entity';
 import { TenantUserEntity } from '../admin/tenant-user.entity';
 
@@ -37,8 +37,8 @@ export class StaffService {
     @InjectRepository(Ticket)
     private readonly ticketRepo: Repository<Ticket>,
 
-    @InjectRepository(Event)
-    private readonly eventRepo: Repository<Event>,
+    @InjectRepository(EventEntity)
+    private readonly eventRepo: Repository<EventEntity>,
 
     @InjectRepository(TicketType)
     private readonly ticketTypeRepo: Repository<TicketType>,
@@ -681,13 +681,13 @@ export class StaffService {
     tenantId: string,
     page: number = 1,
     limit: number = 20,
-  ): Promise<{ data: Event[]; total: number; page: number }> {
+  ): Promise<{ data: EventEntity[]; total: number; page: number }> {
     const [events, total] = await this.eventRepo.findAndCount({
-      where: { tenant_id: tenantId },
+      where: { tenantId: tenantId },
       relations: ['ticketTypes'],
       skip: (page - 1) * limit,
       take: limit,
-      order: { start_at: 'ASC' },
+      order: { startAt: 'ASC' },
     });
 
     return { data: events, total, page };
@@ -697,9 +697,9 @@ export class StaffService {
    * Get event details by ID (read-only).
    * Called from: GET /staff/events/:id
    */
-  async getEventById(tenantId: string, eventId: string): Promise<Event> {
+  async getEventById(tenantId: string, eventId: string): Promise<EventEntity> {
     const event = await this.eventRepo.findOne({
-      where: { id: eventId, tenant_id: tenantId },
+      where: { id: eventId, tenantId: tenantId },
       relations: ['ticketTypes', 'sessions'],
     });
 
@@ -722,7 +722,7 @@ export class StaffService {
   ): Promise<TicketType[]> {
     // Verify event belongs to tenant
     const event = await this.eventRepo.findOne({
-      where: { id: eventId, tenant_id: tenantId },
+      where: { id: eventId, tenantId: tenantId },
     });
 
     if (!event) {
@@ -763,7 +763,7 @@ export class StaffService {
   }> {
     // Verify event belongs to tenant
     const event = await this.eventRepo.findOne({
-      where: { id: eventId, tenant_id: tenantId },
+      where: { id: eventId, tenantId: tenantId },
     });
 
     if (!event) {

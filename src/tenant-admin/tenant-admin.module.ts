@@ -4,7 +4,6 @@ import { TenantAdminService } from './tenant-admin.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailerModule } from '@nestjs-modules/mailer';
 import {
-  Event,
   EventSession,
   TicketType,
   DiscountCode,
@@ -12,6 +11,7 @@ import {
   OrderItem,
   Ticket,
 } from './tenant-entity';
+import { EventEntity } from '../events/event.entity';
 import { UserEntity } from '../admin/user.entity';
 import { TenantUserEntity } from '../admin/tenant-user.entity';
 import { TenantEntity } from '../admin/tenant.entity';
@@ -19,7 +19,7 @@ import { TenantEntity } from '../admin/tenant.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Event,
+      EventEntity,
       EventSession,
       TicketType,
       DiscountCode,

@@ -7,14 +7,14 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import {
-  Event,
-  EventSession,
   TicketType,
   DiscountCode,
   Order,
   OrderItem,
   Ticket,
+  EventSession,
 } from '../tenant-admin/tenant-entity';
+import { EventEntity } from '../events/event.entity';
 import {
   CheckoutDto,
   OrderResponseDto,
@@ -34,8 +34,8 @@ export class AttendeeService {
   private readonly QR_SECRET = process.env.QR_SECRET || 'default-secret-key-change-in-production';
 
   constructor(
-    @InjectRepository(Event)
-    private eventRepository: Repository<Event>,
+    @InjectRepository(EventEntity)
+    private eventRepository: Repository<EventEntity>,
     @InjectRepository(EventSession)
     private eventSessionRepository: Repository<EventSession>,
     @InjectRepository(TicketType)
@@ -56,9 +56,9 @@ export class AttendeeService {
    */
   async getAllPublicEvents(): Promise<PublicEventResponseDto[]> {
     const events = await this.eventRepository.find({
-      where: { status: 'active', is_public: true },
+      where: { status: 'active', isPublished: true },
       relations: ['ticketTypes', 'sessions'],
-      order: { start_at: 'ASC' },
+      order: { startAt: 'ASC' },
     });
 
     return events.map((event) => this.mapToPublicEventResponse(event));
@@ -69,7 +69,7 @@ export class AttendeeService {
    */
   async getEventBySlug(slug: string): Promise<PublicEventResponseDto> {
     const event = await this.eventRepository.findOne({
-      where: { slug, status: 'active', is_public: true },
+      where: { slug, status: 'active', isPublished: true },
       relations: ['ticketTypes', 'sessions'],
     });
 
@@ -85,7 +85,7 @@ export class AttendeeService {
    */
   async getEventById(eventId: string): Promise<PublicEventResponseDto> {
     const event = await this.eventRepository.findOne({
-      where: { id: eventId, status: 'active', is_public: true },
+      where: { id: eventId, status: 'active', isPublished: true },
       relations: ['ticketTypes', 'sessions'],
     });
 
@@ -184,7 +184,7 @@ export class AttendeeService {
   async checkout(checkoutDto: CheckoutDto): Promise<OrderResponseDto> {
     // 1. Validate event exists and is active and public
     const event = await this.eventRepository.findOne({
-      where: { id: checkoutDto.event_id, status: 'active', is_public: true },
+      where: { id: checkoutDto.event_id, status: 'active', isPublished: true },
     });
 
     if (!event) {
@@ -276,7 +276,7 @@ export class AttendeeService {
     try {
       // Create order
       const order = queryRunner.manager.create(Order, {
-        tenant_id: event.tenant_id,
+        tenant_id: event.tenantId,
         event_id: checkoutDto.event_id,
         buyer_email: checkoutDto.buyer_email,
         buyer_name: checkoutDto.buyer_name,
@@ -453,7 +453,7 @@ export class AttendeeService {
   /**
    * Map Event to PublicEventResponseDto
    */
-  private mapToPublicEventResponse(event: Event): PublicEventResponseDto {
+  private mapToPublicEventResponse(event: EventEntity): PublicEventResponseDto {
     return {
       id: event.id,
       name: event.name,
@@ -462,10 +462,10 @@ export class AttendeeService {
       venue: event.venue,
       city: event.city,
       country: event.country,
-      start_at: event.start_at,
-      end_at: event.end_at,
+      start_at: event.startAt,
+      end_at: event.endAt,
       status: event.status,
-      hero_image_url: event.hero_image_url || null,
+      hero_image_url: event.imageUrl || null,
       ticket_types: event.ticketTypes
         ? event.ticketTypes
             .filter((tt) => tt.status === 'active')
@@ -484,7 +484,7 @@ export class AttendeeService {
             }))
         : [],
       sessions: event.sessions
-        ? event.sessions.map((session) => ({
+        ? event.sessions.map((session: any) => ({
             id: session.id,
             title: session.title,
             description: session.description,

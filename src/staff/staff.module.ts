@@ -4,27 +4,29 @@ import { StaffEntity } from './staff.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { StaffService } from './staff.service';
-import { ActivityLogEntity } from '../admin/activity-log.entity';
 import {
-  Event,
+  EventSession,
+  Ticket,
   TicketType,
   Order,
-  Ticket,
 } from '../tenant-admin/tenant-entity';
+import { EventEntity } from '../events/event.entity';
 import { UserEntity } from '../admin/user.entity';
 import { TenantUserEntity } from '../admin/tenant-user.entity';
+import { ActivityLogEntity } from '../admin/activity-log.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       StaffEntity,
-      ActivityLogEntity,
+      EventEntity,
+      EventSession,
       Ticket,
-      Event,
       TicketType,
       Order,
       UserEntity,
       TenantUserEntity,
+      ActivityLogEntity,
     ]),
     MailerModule,
   ],

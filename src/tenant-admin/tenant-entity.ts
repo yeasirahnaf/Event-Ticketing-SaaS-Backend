@@ -4,73 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
   ManyToOne,
   OneToMany,
-  JoinColumn,
 } from 'typeorm';
+import { EventEntity } from '../events/event.entity';
 
-@Entity('events')
-export class Event {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column('uuid')
-  tenant_id: string;
-
-  @Column('varchar', { length: 150 })
-  name: string;
-
-  @Column('varchar', { length: 150 })
-  slug: string;
-
-  @Column('text')
-  description: string;
-
-  @Column('varchar', { length: 200 })
-  venue: string;
-
-  @Column('varchar', { length: 100 })
-  city: string;
-
-  @Column('varchar', { length: 100 })
-  country: string;
-
-  @Column('timestamp')
-  start_at: Date;
-
-  @Column('timestamp')
-  end_at: Date;
-
-  @Column('varchar', { length: 50, default: 'draft' })
-  status: 'draft' | 'scheduled' | 'active' | 'cancelled' | 'completed';
-
-  @Column('boolean', { default: false, name: 'is_public' })
-  is_public: boolean;
-
-  @Column('jsonb', { nullable: true, name: 'seo_meta' })
-  seo_meta: Record<string, any> | null;
-
-  @Column('varchar', { length: 500, nullable: true, name: 'hero_image_url' })
-  hero_image_url: string | null;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
-
-  @OneToMany(() => EventSession, (session) => session.event)
-  sessions: EventSession[];
-
-  @OneToMany(() => TicketType, (ticketType) => ticketType.event)
-  ticketTypes: TicketType[];
-
-  @OneToMany(() => DiscountCode, (discountCode) => discountCode.event)
-  discountCodes: DiscountCode[];
-
-  @OneToMany(() => Order, (order) => order.event)
-  orders: Order[];
-}
 
 @Entity('event_sessions')
 export class EventSession {
@@ -98,9 +37,9 @@ export class EventSession {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Event, (event) => event.sessions)
+  @ManyToOne(() => EventEntity)
   @JoinColumn({ name: 'event_id' })
-  event: Event;
+  event: EventEntity;
 }
 
 @Entity('ticket_types')
@@ -144,9 +83,9 @@ export class TicketType {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Event, (event) => event.ticketTypes)
+  @ManyToOne(() => EventEntity, (event) => event.ticketTypes)
   @JoinColumn({ name: 'event_id' })
-  event: Event;
+  event: EventEntity;
 
   @OneToMany(() => Ticket, (ticket) => ticket.ticketType)
   tickets: Ticket[];
@@ -193,9 +132,9 @@ export class DiscountCode {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Event, (event) => event.discountCodes)
+  @ManyToOne(() => EventEntity, (event) => event.discountCodes)
   @JoinColumn({ name: 'event_id' })
-  event: Event;
+  event: EventEntity;
 }
 
 @Entity('orders')
@@ -236,9 +175,9 @@ export class Order {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Event, (event) => event.orders)
+  @ManyToOne(() => EventEntity, (event) => event.orders)
   @JoinColumn({ name: 'event_id' })
-  event: Event;
+  event: EventEntity;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   orderItems: OrderItem[];

@@ -7,6 +7,7 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { TenantEntity } from '../admin/tenant.entity';
 import { ThemeEntity } from '../admin/theme.entity';
@@ -162,4 +163,17 @@ export class EventEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  
+  @OneToMany('TicketType', 'event')
+  ticketTypes: any[];
+
+  @OneToMany('DiscountCode', 'event')
+  discountCodes: any[];
+
+  @OneToMany('Order', 'event')
+  orders: any[];
+
+  @OneToMany('EventSession', 'event')
+  sessions: any[];
 }
