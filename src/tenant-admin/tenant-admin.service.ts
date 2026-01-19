@@ -32,6 +32,7 @@ import {
 import { UserEntity } from '../admin/user.entity';
 import { TenantUserEntity } from '../admin/tenant-user.entity';
 import { TenantEntity } from '../admin/tenant.entity';
+import { PusherService } from '../shared/pusher.service';
 
 @Injectable()
 export class TenantAdminService {
@@ -52,7 +53,8 @@ export class TenantAdminService {
     @InjectRepository(TenantEntity)
     private tenantRepository: Repository<TenantEntity>,
     private readonly mailerService: MailerService,
-  ) {}
+    private pusherService: PusherService,
+  ) { }
 
   async createEvent(createEventsDto: any): Promise<EventEntity> {
     try {
@@ -74,7 +76,29 @@ export class TenantAdminService {
 
       const event = this.eventRepository.create(eventData);
       const savedEvent = await this.eventRepository.save(event);
-      return Array.isArray(savedEvent) ? savedEvent[0] : savedEvent;
+      const result = Array.isArray(savedEvent) ? savedEvent[0] : savedEvent;
+
+      // Trigger real-time notification
+      try {
+        console.log(`[Pusher] Triggering 'event-created' on channel 'tenant-${result.tenantId}'`, {
+          eventId: result.id,
+          name: result.name
+        });
+        await this.pusherService.trigger(
+          `tenant-${result.tenantId}`,
+          'event-created',
+          {
+            eventId: result.id,
+            name: result.name,
+            timestamp: new Date()
+          }
+        );
+        console.log('[Pusher] Trigger successful');
+      } catch (triggerError) {
+        console.error('[Pusher] Trigger FAILED:', triggerError);
+      }
+
+      return result;
     } catch (error: any) {
       if (error?.code === '23505') {
         throw new ConflictException('Event with same unique field already exists');
@@ -108,7 +132,7 @@ export class TenantAdminService {
   ): Promise<EventEntity> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, eventId);
-    
+
     // Map updates
     const updateData: any = {};
     if (updateEventsDto.name) updateData.name = updateEventsDto.name;
@@ -120,7 +144,7 @@ export class TenantAdminService {
     if (updateEventsDto.start_at) updateData.startAt = updateEventsDto.start_at;
     if (updateEventsDto.end_at) updateData.endAt = updateEventsDto.end_at;
     if (updateEventsDto.status) updateData.status = updateEventsDto.status;
-    
+
     await this.eventRepository.update(eventId, updateData);
     return await this.getEventById(tenantId, eventId);
   }
@@ -131,7 +155,7 @@ export class TenantAdminService {
   ): Promise<{ success: boolean; message: string }> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, eventId);
-    
+
     const result = await this.eventRepository.delete(eventId);
     if (result.affected === 0) {
       throw new NotFoundException(`Event with ID ${eventId} not found`);
@@ -145,14 +169,14 @@ export class TenantAdminService {
   ): Promise<EventSession> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, eventSessionDto.event_id);
-    
+
     try {
       // Map event_id manually since renaming/mapping happened
       const sessionData = {
-          ...eventSessionDto,
-          event: { id: eventSessionDto.event_id } as any 
+        ...eventSessionDto,
+        event: { id: eventSessionDto.event_id } as any
       };
-      
+
       const session = this.eventSessionRepository.create(sessionData);
       return await this.eventSessionRepository.save(session);
     } catch (error: any) {
@@ -166,7 +190,7 @@ export class TenantAdminService {
   async getEventSessions(tenantId: string, eventId: string): Promise<EventSession[]> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, eventId);
-    
+
     return await this.eventSessionRepository.find({
       where: { event: { id: eventId } },
       relations: ['event'],
@@ -199,12 +223,12 @@ export class TenantAdminService {
   ): Promise<EventSession> {
     // Verify session belongs to tenant
     await this.getEventSessionById(tenantId, sessionId);
-    
+
     // If event_id is being updated, verify new event belongs to tenant
     if (updateSessionDto.event_id) {
       await this.getEventById(tenantId, updateSessionDto.event_id);
     }
-    
+
     await this.eventSessionRepository.update(sessionId, updateSessionDto);
     return await this.getEventSessionById(tenantId, sessionId);
   }
@@ -215,7 +239,7 @@ export class TenantAdminService {
   ): Promise<{ success: boolean; message: string }> {
     // Verify session belongs to tenant
     await this.getEventSessionById(tenantId, sessionId);
-    
+
     const result = await this.eventSessionRepository.delete(sessionId);
     if (result.affected === 0) {
       throw new NotFoundException(`Event session with ID ${sessionId} not found`);
@@ -229,14 +253,14 @@ export class TenantAdminService {
   ): Promise<TicketType> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, createTicketDto.event_id);
-    
+
     try {
-       // Manual link to event by ID
-       const ticketTypeData = {
-           ...createTicketDto,
-           event: { id: createTicketDto.event_id } as any
-       };
-       
+      // Manual link to event by ID
+      const ticketTypeData = {
+        ...createTicketDto,
+        event: { id: createTicketDto.event_id } as any
+      };
+
       const ticketType = this.ticketTypeRepository.create(ticketTypeData);
       return await this.ticketTypeRepository.save(ticketType);
     } catch (error: any) {
@@ -250,7 +274,7 @@ export class TenantAdminService {
   async getTicketTypes(tenantId: string, eventId: string): Promise<TicketType[]> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, eventId);
-    
+
     return await this.ticketTypeRepository.find({
       where: { event: { id: eventId } },
       relations: ['event', 'tickets'],
@@ -283,12 +307,12 @@ export class TenantAdminService {
   ): Promise<TicketType> {
     // Verify ticket type belongs to tenant
     await this.getTicketTypeById(tenantId, ticketTypeId);
-    
+
     // If event_id is being updated, verify new event belongs to tenant
     if (updateTicketDto.event_id) {
       await this.getEventById(tenantId, updateTicketDto.event_id);
     }
-    
+
     await this.ticketTypeRepository.update(ticketTypeId, updateTicketDto);
     return await this.getTicketTypeById(tenantId, ticketTypeId);
   }
@@ -299,7 +323,7 @@ export class TenantAdminService {
   ): Promise<{ success: boolean; message: string }> {
     // Verify ticket type belongs to tenant
     await this.getTicketTypeById(tenantId, ticketTypeId);
-    
+
     const result = await this.ticketTypeRepository.delete(ticketTypeId);
     if (result.affected === 0) {
       throw new NotFoundException(`Ticket type with ID ${ticketTypeId} not found`);
@@ -313,13 +337,13 @@ export class TenantAdminService {
   ): Promise<DiscountCode> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, discountCodeDto.event_id);
-    
+
     try {
       const discountData = {
-          ...discountCodeDto,
-          event: { id: discountCodeDto.event_id } as any
+        ...discountCodeDto,
+        event: { id: discountCodeDto.event_id } as any
       };
-      
+
       const discountCode = this.discountCodeRepository.create(discountData);
       return await this.discountCodeRepository.save(discountCode);
     } catch (error: any) {
@@ -333,7 +357,7 @@ export class TenantAdminService {
   async getDiscountCodes(tenantId: string, eventId: string): Promise<DiscountCode[]> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, eventId);
-    
+
     return await this.discountCodeRepository.find({
       where: { event: { id: eventId } },
       relations: ['event'],
@@ -381,12 +405,12 @@ export class TenantAdminService {
   ): Promise<DiscountCode> {
     // Verify discount code belongs to tenant
     await this.getDiscountCodeById(tenantId, discountCodeId);
-    
+
     // If event_id is being updated, verify new event belongs to tenant
     if (updateDiscountDto.event_id) {
       await this.getEventById(tenantId, updateDiscountDto.event_id);
     }
-    
+
     await this.discountCodeRepository.update(discountCodeId, updateDiscountDto);
     return await this.getDiscountCodeById(tenantId, discountCodeId);
   }
@@ -397,7 +421,7 @@ export class TenantAdminService {
   ): Promise<{ success: boolean; message: string }> {
     // Verify discount code belongs to tenant
     await this.getDiscountCodeById(tenantId, discountCodeId);
-    
+
     const result = await this.discountCodeRepository.delete(discountCodeId);
     if (result.affected === 0) {
       throw new NotFoundException(`Discount code with ID ${discountCodeId} not found`);
@@ -408,14 +432,14 @@ export class TenantAdminService {
   async createOrder(tenantId: string, ordersDto: OrdersDto): Promise<Order> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, ordersDto.event_id);
-    
+
     try {
-      const orderData = { 
-          ...ordersDto, 
-          tenant_id: tenantId,
-          event: { id: ordersDto.event_id } as any
+      const orderData = {
+        ...ordersDto,
+        tenant_id: tenantId,
+        event: { id: ordersDto.event_id } as any
       };
-      
+
       const order = this.orderRepository.create(orderData);
       return await this.orderRepository.save(order);
     } catch (error: any) {
@@ -458,16 +482,16 @@ export class TenantAdminService {
   ): Promise<Order> {
     // Verify order belongs to tenant
     await this.getOrderById(tenantId, orderId);
-    
+
     // If event_id is being updated, verify new event belongs to tenant
     if (updateOrderDto.event_id) {
       await this.getEventById(tenantId, updateOrderDto.event_id);
     }
-    
+
     // Ensure tenant_id cannot be changed
     const updateData: any = { ...updateOrderDto };
     delete updateData.tenant_id;
-    
+
     await this.orderRepository.update(orderId, updateData);
     return await this.getOrderById(tenantId, orderId);
   }
@@ -478,7 +502,7 @@ export class TenantAdminService {
   ): Promise<{ success: boolean; message: string }> {
     // Verify order belongs to tenant
     await this.getOrderById(tenantId, orderId);
-    
+
     const result = await this.orderRepository.delete(orderId);
     if (result.affected === 0) {
       throw new NotFoundException(`Order with ID ${orderId} not found`);
@@ -489,7 +513,7 @@ export class TenantAdminService {
   async createTicket(tenantId: string, ticketsDto: TicketsDto): Promise<Ticket> {
     // Verify order belongs to tenant
     await this.getOrderById(tenantId, ticketsDto.order_id);
-    
+
     try {
       const ticket = this.ticketRepository.create(ticketsDto);
       return await this.ticketRepository.save(ticket);
@@ -547,12 +571,12 @@ export class TenantAdminService {
   ): Promise<Ticket> {
     // Verify ticket belongs to tenant
     await this.getTicketById(tenantId, ticketId);
-    
+
     // If order_id is being updated, verify new order belongs to tenant
     if (updateTicketDto.order_id) {
       await this.getOrderById(tenantId, updateTicketDto.order_id);
     }
-    
+
     await this.ticketRepository.update(ticketId, updateTicketDto);
     return await this.getTicketById(tenantId, ticketId);
   }
@@ -563,7 +587,7 @@ export class TenantAdminService {
   ): Promise<{ success: boolean; message: string }> {
     // Verify ticket belongs to tenant
     await this.getTicketById(tenantId, ticketId);
-    
+
     const result = await this.ticketRepository.delete(ticketId);
     if (result.affected === 0) {
       throw new NotFoundException(`Ticket with ID ${ticketId} not found`);
@@ -586,7 +610,7 @@ export class TenantAdminService {
   }> {
     // Verify event belongs to tenant
     await this.getEventById(tenantId, eventId);
-    
+
     const ticketTypes = await this.ticketTypeRepository.find({
       where: { event: { id: eventId } },
       relations: ['event'],
@@ -675,6 +699,27 @@ export class TenantAdminService {
 
       const savedTenantUser = await this.tenantUserRepository.save(tenantUser);
       console.log('Invitation successful, relationship created:', savedTenantUser.id);
+
+      // 5b. Trigger real-time notification
+      try {
+        console.log(`[Pusher] Triggering 'staff-invited' on channel 'tenant-${tenantId}'`, {
+          email: inviteStaffDto.email,
+          role: 'staff'
+        });
+        await this.pusherService.trigger(
+          `tenant-${tenantId}`,
+          'staff-invited',
+          {
+            email: inviteStaffDto.email,
+            fullName: inviteStaffDto.fullName,
+            role: 'staff',
+            timestamp: new Date()
+          }
+        );
+        console.log('[Pusher] Trigger successful');
+      } catch (triggerError) {
+        console.error('[Pusher] Trigger FAILED:', triggerError);
+      }
 
       // 6. Send email (Async, don't block)
       this.sendInvitationEmail(inviteStaffDto).catch(err => {

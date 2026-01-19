@@ -28,6 +28,7 @@ import {
   OrderLookupDto,
 } from './attendee.dto';
 import * as crypto from 'crypto';
+import { PusherService } from '../shared/pusher.service';
 
 @Injectable()
 export class AttendeeService {
@@ -49,7 +50,8 @@ export class AttendeeService {
     @InjectRepository(Ticket)
     private ticketRepository: Repository<Ticket>,
     private dataSource: DataSource,
-  ) {}
+    private pusherService: PusherService,
+  ) { }
 
   /**
    * Get all public events (status = 'active' and is_public = true)
@@ -348,7 +350,30 @@ export class AttendeeService {
 
       await queryRunner.commitTransaction();
 
-      // 6. Return order with relations
+      // 6. Trigger real-time notification
+      try {
+        console.log(`[Pusher] Triggering 'new-order' on channel 'tenant-${event.tenantId}'`, {
+          orderId: savedOrder.id,
+          buyerName: savedOrder.buyer_name
+        });
+        await this.pusherService.trigger(
+          `tenant-${event.tenantId}`,
+          'new-order',
+          {
+            orderId: savedOrder.id,
+            buyerName: savedOrder.buyer_name,
+            totalAmount: savedOrder.total_taka,
+            eventName: event.name,
+            timestamp: new Date()
+          }
+        );
+        console.log('[Pusher] Trigger successful');
+      } catch (triggerError) {
+        console.error('[Pusher] Trigger FAILED:', triggerError);
+        // Don't throw - notification failure shouldn't rollback checkout
+      }
+
+      // 7. Return order with relations
       const fullOrder = await this.orderRepository.findOne({
         where: { id: savedOrder.id },
         relations: ['orderItems', 'orderItems.ticketType', 'tickets', 'tickets.ticketType', 'event'],
@@ -468,29 +493,29 @@ export class AttendeeService {
       hero_image_url: event.imageUrl || null,
       ticket_types: event.ticketTypes
         ? event.ticketTypes
-            .filter((tt) => tt.status === 'active')
-            .map((tt) => ({
-              id: tt.id,
-              name: tt.name,
-              description: tt.description,
-              price_taka: tt.price_taka,
-              currency: tt.currency,
-              quantity_total: tt.quantity_total,
-              quantity_sold: tt.quantity_sold,
-              quantity_available: tt.quantity_total - tt.quantity_sold,
-              sales_start: tt.sales_start,
-              sales_end: tt.sales_end,
-              status: tt.status,
-            }))
+          .filter((tt) => tt.status === 'active')
+          .map((tt) => ({
+            id: tt.id,
+            name: tt.name,
+            description: tt.description,
+            price_taka: tt.price_taka,
+            currency: tt.currency,
+            quantity_total: tt.quantity_total,
+            quantity_sold: tt.quantity_sold,
+            quantity_available: tt.quantity_total - tt.quantity_sold,
+            sales_start: tt.sales_start,
+            sales_end: tt.sales_end,
+            status: tt.status,
+          }))
         : [],
       sessions: event.sessions
         ? event.sessions.map((session: any) => ({
-            id: session.id,
-            title: session.title,
-            description: session.description,
-            start_at: session.start_at,
-            end_at: session.end_at,
-          }))
+          id: session.id,
+          title: session.title,
+          description: session.description,
+          start_at: session.start_at,
+          end_at: session.end_at,
+        }))
         : [],
     };
   }
@@ -512,27 +537,27 @@ export class AttendeeService {
       created_at: order.created_at,
       items: order.orderItems
         ? order.orderItems.map((item) => ({
-            id: item.id,
-            ticket_type_id: item.ticket_type_id,
-            ticket_type_name: item.ticketType?.name || '',
-            unit_price_taka: item.unit_price_taka,
-            quantity: item.quantity,
-            subtotal_taka: item.subtotal_taka,
-          }))
+          id: item.id,
+          ticket_type_id: item.ticket_type_id,
+          ticket_type_name: item.ticketType?.name || '',
+          unit_price_taka: item.unit_price_taka,
+          quantity: item.quantity,
+          subtotal_taka: item.subtotal_taka,
+        }))
         : [],
       tickets: order.tickets
         ? order.tickets.map((ticket) => ({
-            id: ticket.id,
-            order_id: ticket.order_id,
-            ticket_type_id: ticket.ticket_type_id,
-            ticket_type_name: ticket.ticketType?.name || '',
-            attendee_name: ticket.attendee_name,
-            attendee_email: ticket.attendee_email,
-            qr_code_payload: ticket.qr_code_payload,
-            status: ticket.status,
-            checked_in_at: ticket.checked_in_at,
-            seat_label: ticket.seat_label,
-          }))
+          id: ticket.id,
+          order_id: ticket.order_id,
+          ticket_type_id: ticket.ticket_type_id,
+          ticket_type_name: ticket.ticketType?.name || '',
+          attendee_name: ticket.attendee_name,
+          attendee_email: ticket.attendee_email,
+          qr_code_payload: ticket.qr_code_payload,
+          status: ticket.status,
+          checked_in_at: ticket.checked_in_at,
+          seat_label: ticket.seat_label,
+        }))
         : [],
     };
   }

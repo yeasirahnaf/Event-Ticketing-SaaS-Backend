@@ -10,6 +10,7 @@ import { AttendeeModule } from './attendee/attendee.module';
 import { PublicController } from './app/public.controller';
 import { EventsModule } from './events/events.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -42,15 +43,16 @@ import { TicketsModule } from './tickets/tickets.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: '1234',
+      password: '665566',
       database: 'Saas',
       autoLoadEntities: true,
       synchronize: true,
     }),
     EventsModule,
     TicketsModule,
+    SharedModule,
   ],
   controllers: [PublicController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
