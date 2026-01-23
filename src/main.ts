@@ -18,6 +18,6 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
-  await app.listen(process.env.PORT ?? 7000);
+  await app.listen(process.env.PORT ?? 2020);
 }
 void bootstrap();

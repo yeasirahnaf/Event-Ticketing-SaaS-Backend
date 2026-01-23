@@ -38,16 +38,26 @@ import { SharedModule } from './shared/shared.module';
     AuthModule,
     StaffModule,
     AttendeeModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '665566',
-      database: 'Saas',
-      autoLoadEntities: true,
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot(
+      process.env.DATABASE_URL
+        ? {
+            type: 'postgres',
+            url: process.env.DATABASE_URL,
+            autoLoadEntities: true,
+            synchronize: true,
+            ssl: { rejectUnauthorized: false },
+          }
+        : {
+            type: 'postgres',
+            host: 'localhost',
+            port: 5432,
+            username: 'postgres',
+            password: '1212',
+            database: 'Saas',
+            autoLoadEntities: true,
+            synchronize: true,
+          },
+    ),
     EventsModule,
     TicketsModule,
     SharedModule,
